@@ -169,7 +169,7 @@ class GameBoard(tk.Canvas):
         super().__init__(parent, *args, **kwargs,width=500,height=500,bg="black")
 
         self.control = parent
-
+        speed = 20
         def save_game():
             print("save game")
 
@@ -178,6 +178,40 @@ class GameBoard(tk.Canvas):
 
         def quit_game():
             print("quit game")
+
+        def move(event):
+            coords = self.coords(self.pacmanplayer)
+            y = int(coords[0] / 20)
+            x = int(coords[1] / 20)
+            print((x, y), (self.map[x][y]))
+
+            next_right = (x,y+1)
+            next_left = (x,y-1)
+            next_down = (x+1,y)
+            next_up = (x-1, y)
+
+            if event.keysym == 'Up':
+                if (self.map[next_up[0]][next_up[1]] != 1):
+                    self.move(self.pacmanplayer,0,-speed)
+                else:
+                    pass
+
+            if event.keysym == 'Down':
+                if (self.map[next_down[0]][next_down[1]] != 1):
+                    self.move(self.pacmanplayer,0,+speed)
+                else:
+                    pass
+
+            if event.keysym == 'Left':
+                if(self.map[next_left[0]][next_left[1]] != 1):
+                    self.move(self.pacmanplayer, -speed, 0)
+                else:
+                    pass
+            if event.keysym == 'Right':
+                if(self.map[next_right[0]][next_right[1]] != 1):
+                    self.move(self.pacmanplayer, speed, 0)
+                else:
+                    pass
 
 
 
@@ -233,13 +267,14 @@ class GameBoard(tk.Canvas):
                     food = self.create_rectangle(x1+8, y1+8, x2-8, y2-8, fill="white", tags=str(self.map[row][column]))
                     self.tag_bind(food, '<Button-1>', lambda event, tag=self.itemcget(food,"tags"):
                             self.clicked(tag))
-
+        print(self.map[4][2])
         self.pacman = Player(self,1,1,5)
         self.pacmanplayer = self.create_rectangle(self.pacman.x*self.cellwidth, self.pacman.y*self.cellwidth, (self.pacman.x*self.cellwidth) + self.cellwidth, (self.pacman.y*self.cellwidth) + self.cellheight, fill="yellow", tags="pacman")
+        #print(self.pacmacplayer
+        self.bind_all('<Key>',move)
 
-
-        print(self.pacman.x)
-        print(self.pacman.ppx)
+        #print(self.pacman.x)
+        #print(self.pacman.ppx)
 
     def clicked(self,tag):
         print(tag)
