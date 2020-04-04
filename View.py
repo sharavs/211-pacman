@@ -16,8 +16,12 @@ class GameBoard(tk.Canvas):
         super().__init__(parent, *args, **kwargs,width=500,height=500,bg="black")
 
         self.control = parent
+<<<<<<< Updated upstream
 
 
+=======
+        
+>>>>>>> Stashed changes
         def save_game():
             print("save game")
 
@@ -27,8 +31,9 @@ class GameBoard(tk.Canvas):
         def quit_game():
             print("quit game")
 
-
-
+        def move_character(event)
+            if event.keysym == "Up":
+                c.move(rectangle,0,-speed)
         mainmenu = Menu(self)
         parent.config(menu=mainmenu)
         file_option = Menu(mainmenu, tearoff=True)
