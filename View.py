@@ -169,7 +169,7 @@ class GameBoard(tk.Canvas):
         super().__init__(parent, *args, **kwargs,width=500,height=500,bg="black")
 
         self.control = parent
-        speed = 20
+
         def save_game():
             print("save game")
 
@@ -178,6 +178,7 @@ class GameBoard(tk.Canvas):
 
         def quit_game():
             print("quit game")
+
 
         def move(event):
             coords = self.coords(self.pacmanplayer)
@@ -212,6 +213,7 @@ class GameBoard(tk.Canvas):
                     self.move(self.pacmanplayer, speed, 0)
                 else:
                     pass
+
 
 
 
