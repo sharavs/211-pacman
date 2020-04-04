@@ -16,4 +16,4 @@ class CSVModel:
     def __init__(self, saved_data):
             self.saved_data = saved_data
             self.load_data = {}
-            
+
