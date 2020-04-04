@@ -19,6 +19,7 @@ YELLOW = (250,225,0)
 WIDTH = 500
 HEIGHT = 500
 
+'''
 class Character(pygame.sprite.Sprite):
     #sprite for pacman/ghosts
     def __init__(self,x,y,ppx,ppy,speed):
@@ -152,12 +153,22 @@ class gameboard():
 
     pygame.quit()
 '''
+
+
+class Player():
+    def __init__(self,parent,x,y,speed):
+        self.x = x
+        self.y = y
+        self.ppx = x*20
+        self.ppy = x*20
+        self.speed = speed
+
+
 class GameBoard(tk.Canvas):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs,width=500,height=500,bg="black")
 
         self.control = parent
-
 
         def save_game():
             print("save game")
@@ -222,6 +233,13 @@ class GameBoard(tk.Canvas):
                     food = self.create_rectangle(x1+8, y1+8, x2-8, y2-8, fill="white", tags=str(self.map[row][column]))
                     self.tag_bind(food, '<Button-1>', lambda event, tag=self.itemcget(food,"tags"):
                             self.clicked(tag))
+
+        self.pacman = Player(self,1,1,5)
+        self.pacmanplayer = self.create_rectangle(self.pacman.x*self.cellwidth, self.pacman.y*self.cellwidth, (self.pacman.x*self.cellwidth) + self.cellwidth, (self.pacman.y*self.cellwidth) + self.cellheight, fill="yellow", tags="pacman")
+
+
+        print(self.pacman.x)
+        print(self.pacman.ppx)
 
     def clicked(self,tag):
         print(tag)
@@ -289,4 +307,4 @@ class ValidButton(tk.Button):
 
     def __init__(self, parent, cmd='',*args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-'''
+
