@@ -161,7 +161,7 @@ class Player():
         self.x = x
         self.y = y
         self.ppx = x*20
-        self.ppy = x*20
+        self.ppy = y*20
         self.speed = speed
 
 
@@ -180,7 +180,25 @@ class GameBoard(tk.Canvas):
         def quit_game():
             print("quit game")
 
+        '''
+        def move_1():
+            coords = self.coords(self.pacmanplayer)
+            y = int(coords[0] / 20)
+            x = int(coords[1] / 20)
 
+            next_right = (x, y + 1)
+            next_left = (x, y - 1)
+            next_down = (x + 1, y)
+            next_up = (x - 1, y)
+
+            if (self.map[next_right[0]][next_right[1]] != 1):
+                self.move(self.pacmanplayer, +self.pacman.speed, 0)
+
+            else:
+                pass
+
+            self.after(50, move_1)
+        '''
         def move(event):
             coords = self.coords(self.pacmanplayer)
             y = int(coords[0] / 20)
@@ -282,6 +300,8 @@ class GameBoard(tk.Canvas):
         self.cellwidth = 20
         self.cellheight = 20
         self.score = 0
+
+
         for row in range(20):
             for column in range(21):
                 x1 = column * self.cellwidth
@@ -307,7 +327,10 @@ class GameBoard(tk.Canvas):
 
         self.pacman = Player(self,1,1,20)
         self.pacmanplayer = self.create_rectangle(self.pacman.x*self.cellwidth, self.pacman.y*self.cellwidth, (self.pacman.x*self.cellwidth) + self.cellwidth, (self.pacman.y*self.cellwidth) + self.cellheight, fill="yellow", tags="pacman")
+        #move_1()
         self.bind_all('<Key>',move)
+        print(self.coords(self.pacmanplayer))
+        #self.move(self.pacmanplayer, ++self.pacman.speed, 0)
 
         self.score_text = self.create_text(50,420,fill="white",text="SCORE: "+str(self.score))
     def update_map(self):
