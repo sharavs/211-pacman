@@ -1,5 +1,6 @@
 import Model as m
 import View as v
+from tkinter import filedialog, messagebox
 import tkinter as tk
 
 
@@ -12,6 +13,9 @@ class Application(tk.Tk):
         self.gameboard.grid()
 
         #self.game = v.gameboard(self)
+    def gameover(self):
+        messagebox.showinfo('Game Over', 'The ghosts got you, wasted...')
+
 
         
             
