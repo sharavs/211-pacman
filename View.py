@@ -161,7 +161,7 @@ class Player():
         self.x = x
         self.y = y
         self.ppx = x*20
-        self.ppy = x*20
+        self.ppy = y*20
         self.speed = speed
 
 class Ghosts():
@@ -192,6 +192,7 @@ class GameBoard(tk.Canvas):
 
         def quit_game():
             print("quit game")
+
 
         def killed():
             self.control.gameover()
@@ -254,6 +255,7 @@ class GameBoard(tk.Canvas):
             self.after(200, move1)
             #self.update_map()
             '''
+
         def move(event):
             coords = self.coords(self.pacmanplayer)
             y = int(coords[0] / 20)
@@ -366,6 +368,8 @@ class GameBoard(tk.Canvas):
         self.cellwidth = 20
         self.cellheight = 20
         self.score = 0
+
+
         for row in range(20):
             for column in range(21):
                 x1 = column * self.cellwidth
@@ -402,6 +406,7 @@ class GameBoard(tk.Canvas):
         self.bind_all('<Key>', move)
         move1()
         #move1(event='<Key>')
+
         self.score_text = self.create_text(50,420,fill="white",text="SCORE: "+str(self.score))
     def update_map(self):
         try:
