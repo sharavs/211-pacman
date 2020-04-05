@@ -4,7 +4,7 @@ from tkinter import ttk
 from collections import defaultdict
 from tkinter import messagebox
 from tkinter import filedialog
-import pygame
+#import pygame
 import csv
 import os
 import os.path
@@ -164,10 +164,23 @@ class Player():
         self.ppy = y*20
         self.speed = speed
 
+class Ghosts():
+    def __init__(self,parent,x,y,speed):
+        self.x = x
+        self.y = y
+        self.ppx = x * 20
+        self.ppy = x * 20
+        self.speed = speed
+
+
+
+
+
 
 class GameBoard(tk.Canvas):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs,width=500,height=500,bg="black")
+        self.current = (0,0)
 
         self.control = parent
 
@@ -180,36 +193,91 @@ class GameBoard(tk.Canvas):
         def quit_game():
             print("quit game")
 
-        '''
-        def move_1():
-            coords = self.coords(self.pacmanplayer)
-            y = int(coords[0] / 20)
-            x = int(coords[1] / 20)
 
-            next_right = (x, y + 1)
-            next_left = (x, y - 1)
-            next_down = (x + 1, y)
-            next_up = (x - 1, y)
+        def killed():
+            self.control.gameover()
 
-            if (self.map[next_right[0]][next_right[1]] != 1):
-                self.move(self.pacmanplayer, +self.pacman.speed, 0)
+        def move1():
+            coords1 = self.coords(self.ghostplayer)
+            y = int(coords1[0] / 20)
+            x = int(coords1[1] / 20)
+            next_right = (x,y+1)
+            next_left = (x,y-1)
+            next_down = (x+1,y)
+            next_up = (x-1, y)
+            self.current = (x, y)
+            if self.current < (18,18):
+                if (self.map[next_right[0]][next_right[1]] != 1) and (self.map[next_left[0]][next_left[1]] != 1):
+                    self.move(self.ghostplayer, +self.ghost.speed, 0)
+                    print(self.current)
+                elif (self.map[next_right[0]][next_right[1]] == 1):
+                    self.move(self.ghostplayer, 0, +self.ghost.speed)
+                    print(self.current)
+                elif (self.map[next_right[0]][next_right[1]] == 1) and (self.map[next_down[0]][next_down[1]] == 1):
+                    self.move(self.ghostplayer, 0, +15)
+                    print(self.current)
+                elif self.current==(19, 19):
+                    print('found')
+                    self.move(self.ghostplayer, -self.ghost.speed, 0)
+                #elif (self.map[next_left[0]][next_left[1]] != 1):
+                #    self.move(self.ghostplayer, 0, -self.ghost.speed)
+                else:
+                    print('else')
+                    if (self.map[next_left[0]][next_left[1]] != 1):
+                        self.move(self.ghostplayer, 0, -self.ghost.speed)
+                    else:
+                        self.move(self.ghostplayer, 0, +self.ghost.speed)
 
             else:
-                pass
+                self.move(self.ghostplayer, -self.ghost.speed*17, -self.ghost.speed*6)
+            self.after(100,move1)
+            '''
+            #self.direction = random.choice(('left','right','up','down','left','right','up','down'))
+            current = (x, y)
 
-            self.after(50, move_1)
-        '''
+            if self.direction=='down' and (self.map[next_down[0]][next_down[1]] != 1):
+                self.move(self.ghostplayer, 0, +self.ghost.speed)
+                print('downward')
+            elif self.direction=='right' and (self.map[next_right[0]][next_right[1]] != 1):
+                self.move(self.ghostplayer, +self.ghost.speed, 0)
+                print('rightward')
+            elif self.direction == 'up' and (self.map[next_up[0]][next_up[1]] != 1):
+                self.move(self.ghostplayer, 0, +self.ghost.speed)
+                print('upward')
+            elif self.direction=='left' and (self.map[next_left[0]][next_left[1]] != 1):
+                self.move(self.ghostplayer, +self.ghost.speed, 0)
+                print('leftward')
+
+            else:
+                self.direction = random.choice(('left','right','up','down'))
+                print('passing..', self.direction)
+
+            self.after(200, move1)
+            #self.update_map()
+            '''
+
         def move(event):
             coords = self.coords(self.pacmanplayer)
             y = int(coords[0] / 20)
             x = int(coords[1] / 20)
-            #print((x, y), (self.map[x][y]))
+            print((x, y))
 
             next_right = (x,y+1)
             next_left = (x,y-1)
             next_down = (x+1,y)
             next_up = (x-1, y)
+            current = (x, y)
+            if current == self.current:
+                print("Game Over")
+                killed()
 
+
+
+
+
+
+
+            # Player
             if event.keysym == 'Up':
                 if (self.map[next_up[0]][next_up[1]] != 1):
                     self.move(self.pacmanplayer,0,-self.pacman.speed)
@@ -326,17 +394,26 @@ class GameBoard(tk.Canvas):
                     self.clicked(tag))
 
         self.pacman = Player(self,1,1,20)
-        self.pacmanplayer = self.create_rectangle(self.pacman.x*self.cellwidth, self.pacman.y*self.cellwidth, (self.pacman.x*self.cellwidth) + self.cellwidth, (self.pacman.y*self.cellwidth) + self.cellheight, fill="yellow", tags="pacman")
-        #move_1()
-        self.bind_all('<Key>',move)
-        print(self.coords(self.pacmanplayer))
-        #self.move(self.pacmanplayer, ++self.pacman.speed, 0)
+        self.pacmanplayer = self.create_oval(self.pacman.x*self.cellwidth, self.pacman.y*self.cellwidth, (self.pacman.x*self.cellwidth) + self.cellwidth, (self.pacman.y*self.cellwidth) + self.cellheight, fill="yellow", tags="pacman")
+
+        #self.bind_all('<Key>',move)
+
+        self.ghost = Ghosts(self, 2, 1, 20)
+        self.ghostplayer = self.create_oval(self.ghost.x * self.cellwidth, self.ghost.y * self.cellwidth,
+                                                  (self.ghost.x * self.cellwidth) + self.cellwidth,
+                                                  (self.ghost.y * self.cellwidth) + self.cellheight, fill="magenta",
+                                                  tags="ghost")
+        self.bind_all('<Key>', move)
+        move1()
+        #move1(event='<Key>')
 
         self.score_text = self.create_text(50,420,fill="white",text="SCORE: "+str(self.score))
     def update_map(self):
         try:
+            move1() # remove later
             self.delete("all")
             self.score_text = self.create_text(50, 420, fill="white", text="SCORE: "+str(self.score))
+
             for row in range(20):
                 for column in range(21):
                     x1 = column * self.cellwidth
@@ -359,17 +436,27 @@ class GameBoard(tk.Canvas):
                                                  tags=str(self.map[row][column]))
                         self.tag_bind(food, '<Button-1>', lambda event, tag=self.itemcget(food, "tags"):
                         self.clicked(tag))
-            self.pacmanplayer = self.create_rectangle(self.pacman_newx * self.cellwidth, self.pacman_newy * self.cellwidth,
+            self.pacmanplayer = self.create_oval(self.pacman_newx * self.cellwidth, self.pacman_newy * self.cellwidth,
                                                   (self.pacman_newx * self.cellwidth) + self.cellwidth,
                                                   (self.pacman_newy * self.cellwidth) + self.cellheight, fill="yellow",
                                                   tags="pacman")
+            self.ghostplayer = self.create_oval(self.ghost_newx * self.cellwidth,
+                                                      self.ghost_newy * self.cellwidth,
+                                                      (self.ghost_newx * self.cellwidth) + self.cellwidth,
+                                                      (self.ghost_newy * self.cellwidth) + self.cellheight,
+                                                      fill="magenta",
+                                                      tags="ghost")
+
             self.bind_all('<Key>', move)
+
 
         except Exception as e:
             pass
 
     def clicked(self,tag):
         print(tag)
+
+
 
 class ValidEntry(ttk.Entry):
 
