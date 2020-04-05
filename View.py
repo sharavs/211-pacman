@@ -11,6 +11,7 @@ import os.path
 import random
 import re
 import time
+import threading
 
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -183,6 +184,9 @@ class GameBoard(tk.Canvas):
         self.current = (0,0)
 
         self.control = parent
+        self.direction = None
+        self.previous = None
+        self.direction_list = ['Up', 'Down', 'Right', 'Left']
 
         def save_game():
             print("save game")
@@ -197,6 +201,7 @@ class GameBoard(tk.Canvas):
         def killed():
             self.control.gameover()
 
+        '''
         def move1():
             coords1 = self.coords(self.ghostplayer)
             y = int(coords1[0] / 20)
@@ -209,29 +214,31 @@ class GameBoard(tk.Canvas):
             if self.current < (18,18):
                 if (self.map[next_right[0]][next_right[1]] != 1) and (self.map[next_left[0]][next_left[1]] != 1):
                     self.move(self.ghostplayer, +self.ghost.speed, 0)
-                    print(self.current)
+                    #print(self.current)
                 elif (self.map[next_right[0]][next_right[1]] == 1):
                     self.move(self.ghostplayer, 0, +self.ghost.speed)
-                    print(self.current)
+                    #print(self.current)
                 elif (self.map[next_right[0]][next_right[1]] == 1) and (self.map[next_down[0]][next_down[1]] == 1):
                     self.move(self.ghostplayer, 0, +15)
-                    print(self.current)
+                    #print(self.current)
                 elif self.current==(19, 19):
-                    print('found')
+                    #print('found')
                     self.move(self.ghostplayer, -self.ghost.speed, 0)
                 #elif (self.map[next_left[0]][next_left[1]] != 1):
                 #    self.move(self.ghostplayer, 0, -self.ghost.speed)
                 else:
-                    print('else')
+                    #print('else')
                     if (self.map[next_left[0]][next_left[1]] != 1):
                         self.move(self.ghostplayer, 0, -self.ghost.speed)
                     else:
                         self.move(self.ghostplayer, 0, +self.ghost.speed)
 
             else:
-                self.move(self.ghostplayer, -self.ghost.speed*17, -self.ghost.speed*6)
+                #self.move(self.ghostplayer, -self.ghost.speed*17, -self.ghost.speed*6)
+                pass
             self.after(100,move1)
-            '''
+            
+            
             #self.direction = random.choice(('left','right','up','down','left','right','up','down'))
             current = (x, y)
 
@@ -254,13 +261,229 @@ class GameBoard(tk.Canvas):
 
             self.after(200, move1)
             #self.update_map()
-            '''
+        '''
 
-        def move(event):
+
+        def moveright():
             coords = self.coords(self.pacmanplayer)
             y = int(coords[0] / 20)
             x = int(coords[1] / 20)
-            print((x, y))
+            next_right = (x, y + 1)
+            if (self.map[next_right[0]][next_right[1]] != 1) and (self.direction == "Right"):
+                self.move(self.pacmanplayer, +self.pacman.speed, 0)
+                self.pacman_newx = next_right[1]
+                self.pacman_newy = next_right[0]
+                if (self.map[next_right[0]][next_right[1]] == 2):
+                    self.score += 1
+                    self.map[next_right[0]][next_right[1]] = 0
+                    self.update_map()
+                else:
+                    pass
+                self.after(100, moveright)
+            else:
+                pass
+
+
+        def moveleft():
+            coords = self.coords(self.pacmanplayer)
+            y = int(coords[0] / 20)
+            x = int(coords[1] / 20)
+            next_left = (x, y - 1)
+            if (self.map[next_left[0]][next_left[1]] != 1) and (self.direction == "Left"):
+                if (self.map[next_left[0]][next_left[1]] != 1):
+                    self.move(self.pacmanplayer, -self.pacman.speed, 0)
+                    self.pacman_newx = next_left[1]
+                    self.pacman_newy = next_left[0]
+                    if (self.map[next_left[0]][next_left[1]] == 2):
+                        self.score += 1
+                        self.map[next_left[0]][next_left[1]] = 0
+                        self.update_map()
+                    else:
+                        pass
+                self.after(100,moveleft)
+            else:
+                pass
+
+        def movedown():
+            coords = self.coords(self.pacmanplayer)
+            y = int(coords[0] / 20)
+            x = int(coords[1] / 20)
+            next_down = (x + 1, y)
+            if (self.map[next_down[0]][next_down[1]] != 1) and (self.direction == "Down"):
+                self.move(self.pacmanplayer, 0, self.pacman.speed)
+                self.pacman_newx = next_down[1]
+                self.pacman_newy = next_down[0]
+                if (self.map[next_down[0]][next_down[1]] == 2):
+                    self.score += 1
+                    self.map[next_down[0]][next_down[1]] = 0
+                    self.update_map()
+                else:
+                    pass
+                self.after(100,movedown)
+            else:
+                pass
+
+
+        def moveup():
+            coords = self.coords(self.pacmanplayer)
+            y = int(coords[0] / 20)
+            x = int(coords[1] / 20)
+            next_up = (x - 1, y)
+            if (self.map[next_up[0]][next_up[1]] != 1) and (self.direction == "Up"):
+                self.move(self.pacmanplayer, 0, -self.pacman.speed)
+                self.pacman_newx = next_up[1]
+                self.pacman_newy = next_up[0]
+                if (self.map[next_up[0]][next_up[1]] == 2):
+                    self.score += 1
+                    self.map[next_up[0]][next_up[1]] = 0
+                    self.update_map()
+                else:
+                    pass
+                self.after(100,moveup)
+            else:
+                pass
+
+
+
+
+        def keypressed(event):
+            print(event.keysym)
+            self.direction = event.keysym
+            if self.direction == "Right":
+                moveright()
+            elif self.direction == "Left":
+                moveleft()
+            elif self.direction == "Up":
+                moveup()
+            else:
+                movedown()
+
+        def keyreleased(event):
+            print(event.keysym, "released")
+
+        def ghostmovedown():
+            coords = self.coords(self.ghost1)
+            y = int(coords[0] / 20)
+            x = int(coords[1] / 20)
+            next_down = (x + 1, y)
+
+            if (self.map[next_down[0]][next_down[1]] != 1):
+                self.move(self.ghost1, 0, +self.ghost.speed)
+                self.ghost_newx = next_down[1]
+                self.ghost_newy = next_down[0]
+                self.after(100, ghostmovedown)
+                self.update()
+                #self.update_idletasks()
+            else:
+                self.previous = self.ghost_direction
+                ghost_choose_direction()
+
+
+        def ghostmoveup():
+            coords = self.coords(self.ghost1)
+            y = int(coords[0] / 20)
+            x = int(coords[1] / 20)
+            next_up = (x - 1, y)
+            if (self.map[next_up[0]][next_up[1]] != 1):
+                self.move(self.ghost1, 0,-self.ghost.speed)
+                self.ghost_newx = next_up[1]
+                self.ghost_newy = next_up[0]
+                self.after(100, ghostmoveup)
+                self.update()
+                #self.update_idletasks()
+            else:
+                self.previous = self.ghost_direction
+                ghost_choose_direction()
+
+
+        def ghostmoveright():
+            coords = self.coords(self.ghost1)
+            y = int(coords[0] / 20)
+            x = int(coords[1] / 20)
+            next_right = (x, y + 1)
+            if (self.map[next_right[0]][next_right[1]] != 1):
+                self.move(self.ghost1, +self.ghost.speed, 0)
+                self.ghost_newx = next_right[1]
+                self.ghost_newy = next_right[0]
+                self.after(100, ghostmoveright)
+                self.update()
+                #self.update_idletasks()
+            else:
+                self.previous = self.ghost_direction
+                ghost_choose_direction()
+
+        def ghostmoveleft():
+            coords = self.coords(self.ghost1)
+            y = int(coords[0] / 20)
+            x = int(coords[1] / 20)
+            next_left = (x, y - 1)
+            if (self.map[next_left[0]][next_left[1]] != 1):
+                self.move(self.ghost1, -self.ghost.speed, 0)
+                self.ghost_newx = next_left[1]
+                self.ghost_newy = next_left[0]
+                self.after(100, ghostmoveleft)
+                self.update()
+                #self.update_idletasks()
+            else:
+                self.previous = self.ghost_direction
+                ghost_choose_direction()
+
+
+
+        def ghost_choose_direction():
+
+            self.ghost_direction = random.choice(self.direction_list)
+            if self.ghost_direction == self.previous:
+                self.after(100,ghost_choose_direction)
+            else:
+                if self.ghost_direction == "Up":
+                    ghostmoveup()
+                elif self.ghost_direction == "Down":
+                    ghostmovedown()
+                elif self.ghost_direction == "Right":
+                    ghostmoveright()
+                else:
+                    ghostmoveleft()
+
+            #print(self.ghost_direction)
+
+
+
+        def move_ghost1():
+            coords = self.coords(self.ghost1)
+            print(coords)
+            y = int(coords[0] / 20)
+            x = int(coords[1] / 20)
+
+            next_up = (x - 1, y)
+            
+            self.direction_list = ['Up','Down','Right','Left']
+            self.ghost_direction = 'Up'
+            if self.ghost_direction == "Up":
+                if (self.map[next_up[0]][next_up[1]] != 1):
+                    self.move(self.ghost1, 0, -self.ghost.speed)
+                    self.ghost_newx = next_up[1]
+                    self.ghost_newy = next_up[0]
+
+                else:
+                    pass
+                #self.after(100, move_ghost)
+            else:
+                pass
+            self.update_map()
+
+
+            print(self.ghost_direction)
+
+
+        '''
+        def move(event):
+            key_pressed = event.keysym
+            print(key_pressed)
+            coords = self.coords(self.pacmanplayer)
+            y = int(coords[0] / 20)
+            x = int(coords[1] / 20)
+            #print((x, y))
 
             next_right = (x,y+1)
             next_left = (x,y-1)
@@ -271,14 +494,9 @@ class GameBoard(tk.Canvas):
                 print("Game Over")
                 killed()
 
-
-
-
-
-
-
             # Player
             if event.keysym == 'Up':
+                #while (self.map[next_up[0]][next_up[1]] != 1):
                 if (self.map[next_up[0]][next_up[1]] != 1):
                     self.move(self.pacmanplayer,0,-self.pacman.speed)
                     self.pacman_newx = next_up[1]
@@ -289,12 +507,16 @@ class GameBoard(tk.Canvas):
                         self.update_map()
                     else:
                         pass
-                else:
-                    pass
+
+                    coords = self.coords(self.pacmanplayer)
+                    y = int(coords[0] / 20)
+                    x = int(coords[1] / 20)
+                    next_up = (x - 1, y)
 
             if event.keysym == 'Down':
+                #while (self.map[next_down[0]][next_down[1]] != 1):
                 if (self.map[next_down[0]][next_down[1]] != 1):
-                    self.move(self.pacmanplayer,0,+self.pacman.speed)
+                    self.move(self.pacmanplayer,0,self.pacman.speed)
                     self.pacman_newx = next_down[1]
                     self.pacman_newy = next_down[0]
                     if (self.map[next_down[0]][next_down[1]] == 2):
@@ -303,10 +525,13 @@ class GameBoard(tk.Canvas):
                         self.update_map()
                     else:
                         pass
-                else:
-                    pass
+                    coords = self.coords(self.pacmanplayer)
+                    y = int(coords[0] / 20)
+                    x = int(coords[1] / 20)
+                    next_down = (x + 1, y)
 
             if event.keysym == 'Left':
+                #while(self.map[next_left[0]][next_left[1]] != 1):
                 if(self.map[next_left[0]][next_left[1]] != 1):
                     self.move(self.pacmanplayer, -self.pacman.speed, 0)
                     self.pacman_newx = next_left[1]
@@ -317,11 +542,16 @@ class GameBoard(tk.Canvas):
                         self.update_map()
                     else:
                         pass
-                else:
-                    pass
+                    coords = self.coords(self.pacmanplayer)
+                    y = int(coords[0] / 20)
+                    x = int(coords[1] / 20)
+                    next_left = (x, y - 1)
+
             if event.keysym == 'Right':
+                #while(self.map[next_right[0]][next_right[1]] != 1):
                 if(self.map[next_right[0]][next_right[1]] != 1):
-                    self.move(self.pacmanplayer, self.pacman.speed, 0)
+                    self.move(self.pacmanplayer, +self.pacman.speed, 0)
+                    time.sleep(0.01)
                     self.pacman_newx = next_right[1]
                     self.pacman_newy = next_right[0]
                     if (self.map[next_right[0]][next_right[1]] == 2):
@@ -330,10 +560,14 @@ class GameBoard(tk.Canvas):
                         self.update_map()
                     else:
                         pass
-                else:
-                    pass
-            print(self.score)
+                    coords = self.coords(self.pacmanplayer)
+                    y = int(coords[0] / 20)
+                    x = int(coords[1] / 20)
+                    next_right = (x, y + 1)
+            self.after(50,self.move)
 
+            print(self.score)
+            '''
 
 
         mainmenu = Menu(self)
@@ -345,16 +579,16 @@ class GameBoard(tk.Canvas):
         file_option.add_cascade(label="Quit Game", command=quit_game)
 
         self.map = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+                    [1,0,2,2,2,2,2,1,2,2,2,2,2,1,2,2,2,2,2,2,1],
                     [1,2,1,1,1,1,2,1,1,1,2,1,1,1,2,1,1,1,1,2,1],
                     [1,2,1,1,1,1,2,2,2,2,2,2,2,2,2,1,1,1,1,2,1],
                     [1,2,2,2,2,2,2,2,2,1,2,1,2,2,2,2,2,2,2,2,1],
-                    [1,2,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,2,1],
-                    [1,2,2,1,1,2,2,1,1,2,2,2,1,1,2,2,1,1,2,2,1],
-                    [1,2,2,1,1,2,2,1,1,2,2,2,1,1,2,2,1,1,2,2,1],
-                    [1,2,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,2,1],
+                    [1,2,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1],
+                    [1,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+                    [1,2,2,2,2,2,2,1,1,1,1,1,1,1,2,2,2,2,2,2,1],
+                    [1,2,2,1,1,2,2,2,2,2,0,2,2,2,2,2,1,1,2,2,1],
                     [1,2,2,2,1,1,1,2,1,0,0,0,1,2,1,1,1,2,2,2,1],
-                    [1,2,1,1,1,2,2,2,1,0,0,0,1,2,2,2,1,1,1,2,1],
+                    [1,1,1,2,1,2,2,2,1,0,0,0,1,2,2,2,1,2,1,1,1],
                     [1,2,2,2,1,1,1,2,1,1,1,1,1,2,1,1,1,2,2,2,1],
                     [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
                     [1,2,1,1,1,2,2,2,2,1,1,1,2,2,2,2,1,1,1,2,1],
@@ -362,12 +596,13 @@ class GameBoard(tk.Canvas):
                     [1,2,2,2,2,2,2,1,2,1,2,1,2,1,2,2,2,2,2,2,1],
                     [1,2,1,1,1,1,2,2,2,1,2,1,2,2,2,1,1,1,1,2,1],
                     [1,2,1,1,1,1,2,1,1,1,2,1,1,1,2,1,1,1,1,2,1],
-                    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+                    [1,2,2,2,2,2,2,1,2,2,2,2,2,1,2,2,2,2,2,2,1],
                     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
 
         self.cellwidth = 20
         self.cellheight = 20
         self.score = 0
+
 
 
         for row in range(20):
@@ -396,21 +631,23 @@ class GameBoard(tk.Canvas):
         self.pacman = Player(self,1,1,20)
         self.pacmanplayer = self.create_oval(self.pacman.x*self.cellwidth, self.pacman.y*self.cellwidth, (self.pacman.x*self.cellwidth) + self.cellwidth, (self.pacman.y*self.cellwidth) + self.cellheight, fill="yellow", tags="pacman")
 
-        #self.bind_all('<Key>',move)
 
-        self.ghost = Ghosts(self, 2, 1, 20)
-        self.ghostplayer = self.create_oval(self.ghost.x * self.cellwidth, self.ghost.y * self.cellwidth,
+
+        self.ghost = Ghosts(self, 10, 10, 20)
+        self.ghost1 = self.create_oval(self.ghost.x * self.cellwidth, self.ghost.y * self.cellwidth,
                                                   (self.ghost.x * self.cellwidth) + self.cellwidth,
                                                   (self.ghost.y * self.cellwidth) + self.cellheight, fill="magenta",
                                                   tags="ghost")
-        self.bind_all('<Key>', move)
-        move1()
-        #move1(event='<Key>')
+
+        ghost_choose_direction()
+        self.bind_all("<KeyPress>", keypressed)
+
 
         self.score_text = self.create_text(50,420,fill="white",text="SCORE: "+str(self.score))
+
     def update_map(self):
         try:
-            move1() # remove later
+
             self.delete("all")
             self.score_text = self.create_text(50, 420, fill="white", text="SCORE: "+str(self.score))
 
@@ -436,18 +673,24 @@ class GameBoard(tk.Canvas):
                                                  tags=str(self.map[row][column]))
                         self.tag_bind(food, '<Button-1>', lambda event, tag=self.itemcget(food, "tags"):
                         self.clicked(tag))
+
             self.pacmanplayer = self.create_oval(self.pacman_newx * self.cellwidth, self.pacman_newy * self.cellwidth,
                                                   (self.pacman_newx * self.cellwidth) + self.cellwidth,
                                                   (self.pacman_newy * self.cellwidth) + self.cellheight, fill="yellow",
                                                   tags="pacman")
-            self.ghostplayer = self.create_oval(self.ghost_newx * self.cellwidth,
+            self.ghost1 = self.create_oval(self.ghost_newx * self.cellwidth,
                                                       self.ghost_newy * self.cellwidth,
                                                       (self.ghost_newx * self.cellwidth) + self.cellwidth,
                                                       (self.ghost_newy * self.cellwidth) + self.cellheight,
                                                       fill="magenta",
                                                       tags="ghost")
 
-            self.bind_all('<Key>', move)
+
+            #move_ghost()
+            #self.bind('<Right>', move_right)
+            self.bind_all("<KeyPress>",keypressed)
+
+            #move1()  # remove later
 
 
         except Exception as e:
