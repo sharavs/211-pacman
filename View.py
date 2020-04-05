@@ -10,6 +10,7 @@ import os
 import os.path
 import random
 import re
+import time
 
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -194,9 +195,12 @@ class GameBoard(tk.Canvas):
             if event.keysym == 'Up':
                 if (self.map[next_up[0]][next_up[1]] != 1):
                     self.move(self.pacmanplayer,0,-self.pacman.speed)
+                    self.pacman_newx = next_up[1]
+                    self.pacman_newy = next_up[0]
                     if (self.map[next_up[0]][next_up[1]] == 2):
+                        self.score += 1
                         self.map[next_up[0]][next_up[1]] = 0
-                        print("eating")
+                        self.update_map()
                     else:
                         pass
                 else:
@@ -205,9 +209,12 @@ class GameBoard(tk.Canvas):
             if event.keysym == 'Down':
                 if (self.map[next_down[0]][next_down[1]] != 1):
                     self.move(self.pacmanplayer,0,+self.pacman.speed)
+                    self.pacman_newx = next_down[1]
+                    self.pacman_newy = next_down[0]
                     if (self.map[next_down[0]][next_down[1]] == 2):
+                        self.score += 1
                         self.map[next_down[0]][next_down[1]] = 0
-                        print("eating")
+                        self.update_map()
                     else:
                         pass
                 else:
@@ -216,9 +223,12 @@ class GameBoard(tk.Canvas):
             if event.keysym == 'Left':
                 if(self.map[next_left[0]][next_left[1]] != 1):
                     self.move(self.pacmanplayer, -self.pacman.speed, 0)
+                    self.pacman_newx = next_left[1]
+                    self.pacman_newy = next_left[0]
                     if (self.map[next_left[0]][next_left[1]] == 2):
+                        self.score += 1
                         self.map[next_left[0]][next_left[1]] = 0
-                        print("eating")
+                        self.update_map()
                     else:
                         pass
                 else:
@@ -226,17 +236,18 @@ class GameBoard(tk.Canvas):
             if event.keysym == 'Right':
                 if(self.map[next_right[0]][next_right[1]] != 1):
                     self.move(self.pacmanplayer, self.pacman.speed, 0)
+                    self.pacman_newx = next_right[1]
+                    self.pacman_newy = next_right[0]
                     if (self.map[next_right[0]][next_right[1]] == 2):
+                        self.score += 1
                         self.map[next_right[0]][next_right[1]] = 0
-                        print("eating")
+                        self.update_map()
                     else:
                         pass
                 else:
                     pass
-            for i in self.map:
-                print(i)
-            print('break')
-            self.update()
+            print(self.score)
+
 
 
         mainmenu = Menu(self)
@@ -248,7 +259,7 @@ class GameBoard(tk.Canvas):
         file_option.add_cascade(label="Quit Game", command=quit_game)
 
         self.map = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+                    [1,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
                     [1,2,1,1,1,1,2,1,1,1,2,1,1,1,2,1,1,1,1,2,1],
                     [1,2,1,1,1,1,2,2,2,2,2,2,2,2,2,1,1,1,1,2,1],
                     [1,2,2,2,2,2,2,2,2,1,2,1,2,2,2,2,2,2,2,2,1],
@@ -270,7 +281,7 @@ class GameBoard(tk.Canvas):
 
         self.cellwidth = 20
         self.cellheight = 20
-
+        self.score = 0
         for row in range(20):
             for column in range(21):
                 x1 = column * self.cellwidth
@@ -280,22 +291,59 @@ class GameBoard(tk.Canvas):
 
                 if self.map[row][column] == 1:
                     wall = self.create_rectangle(x1, y1, x2, y2, fill="blue", tags=str(self.map[row][column]))
-                    self.tag_bind(wall, '<Button-1>', lambda event, tag=self.itemcget(wall,"tags"):
-                            self.clicked(tag))
+                    self.tag_bind(wall, '<Button-1>', lambda event, tag=self.itemcget(wall, "tags"):
+                    self.clicked(tag))
 
-                elif self.map[row][column]==0:
-                    open_space = self.create_rectangle(x1, y1, x2, y2, fill="black", tags=str(self.map[row][column]))
-                    self.tag_bind(open_space, '<Button-1>', lambda event, tag=self.itemcget(open_space,"tags"):
-                            self.clicked(tag))
+                elif self.map[row][column] == 0:
+                    open_space = self.create_rectangle(x1, y1, x2, y2, fill="black",
+                                                       tags=str(self.map[row][column]))
+                    self.tag_bind(open_space, '<Button-1>', lambda event, tag=self.itemcget(open_space, "tags"):
+                    self.clicked(tag))
                 else:
-                    food = self.create_rectangle(x1+8, y1+8, x2-8, y2-8, fill="white", tags=str(self.map[row][column]))
-                    self.tag_bind(food, '<Button-1>', lambda event, tag=self.itemcget(food,"tags"):
-                            self.clicked(tag))
+                    food = self.create_rectangle(x1 + 8, y1 + 8, x2 - 8, y2 - 8, fill="white",
+                                                 tags=str(self.map[row][column]))
+                    self.tag_bind(food, '<Button-1>', lambda event, tag=self.itemcget(food, "tags"):
+                    self.clicked(tag))
 
         self.pacman = Player(self,1,1,20)
         self.pacmanplayer = self.create_rectangle(self.pacman.x*self.cellwidth, self.pacman.y*self.cellwidth, (self.pacman.x*self.cellwidth) + self.cellwidth, (self.pacman.y*self.cellwidth) + self.cellheight, fill="yellow", tags="pacman")
         self.bind_all('<Key>',move)
 
+        self.score_text = self.create_text(50,420,fill="white",text="SCORE: "+str(self.score))
+    def update_map(self):
+        try:
+            self.delete("all")
+            self.score_text = self.create_text(50, 420, fill="white", text="SCORE: "+str(self.score))
+            for row in range(20):
+                for column in range(21):
+                    x1 = column * self.cellwidth
+                    y1 = row * self.cellheight
+                    x2 = x1 + self.cellwidth
+                    y2 = y1 + self.cellheight
+
+                    if self.map[row][column] == 1:
+                        wall = self.create_rectangle(x1, y1, x2, y2, fill="blue", tags=str(self.map[row][column]))
+                        self.tag_bind(wall, '<Button-1>', lambda event, tag=self.itemcget(wall, "tags"):
+                        self.clicked(tag))
+
+                    elif self.map[row][column] == 0:
+                        open_space = self.create_rectangle(x1, y1, x2, y2, fill="black",
+                                                       tags=str(self.map[row][column]))
+                        self.tag_bind(open_space, '<Button-1>', lambda event, tag=self.itemcget(open_space, "tags"):
+                        self.clicked(tag))
+                    else:
+                        food = self.create_rectangle(x1 + 8, y1 + 8, x2 - 8, y2 - 8, fill="white",
+                                                 tags=str(self.map[row][column]))
+                        self.tag_bind(food, '<Button-1>', lambda event, tag=self.itemcget(food, "tags"):
+                        self.clicked(tag))
+            self.pacmanplayer = self.create_rectangle(self.pacman_newx * self.cellwidth, self.pacman_newy * self.cellwidth,
+                                                  (self.pacman_newx * self.cellwidth) + self.cellwidth,
+                                                  (self.pacman_newy * self.cellwidth) + self.cellheight, fill="yellow",
+                                                  tags="pacman")
+            self.bind_all('<Key>', move)
+
+        except Exception as e:
+            pass
 
     def clicked(self,tag):
         print(tag)
