@@ -173,29 +173,96 @@ class Ghosts():
         self.ppy = x * 20
         self.speed = speed
 
-
-
-
-
-
 class GameBoard(tk.Canvas):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs,width=500,height=500,bg="black")
         self.current = (0,0)
-
+        self.score = 0
         self.control = parent
+        parent.title("Pacman HD")
         self.direction = None
         self.previous = None
         self.direction_list = ['Up', 'Down', 'Right', 'Left']
+        self.filecontent = []
 
         def save_game():
             print("save game")
+            self.control.save()
 
-        def load_game():
+        def load_game(*args):
             print("load game")
+
+            self.data = self.control.load()  # data retrieves its values from self.control (controller parent)
+            wordlist = self.data
+
+            self.score = int(wordlist[0][1:-1])
+            self.map = []
+            final_list =[]
+            new_list = []
+            i = wordlist[1][1:-1]
+            for var in i:
+                for col in var:
+                    if col == ' ' or col == '[' or col == ']' or col == ',':
+                        #print('char')
+                        pass
+                    elif col == '1' or '2' or '0':
+                        #print(col)
+                        new_list.append(int(col))
+                    else:
+                        pass
+            print(type(new_list), new_list)
+            # Append to final_list
+            final_list.append(new_list[0:21])
+            final_list.append(new_list[21:42])
+            final_list.append(new_list[42:63])
+            final_list.append(new_list[63:84])
+            final_list.append(new_list[84:105])
+            final_list.append(new_list[105:126])
+            final_list.append(new_list[126:147])
+            final_list.append(new_list[147:168])
+            final_list.append(new_list[168:189])
+            final_list.append(new_list[189:210])
+
+            final_list.append(new_list[210:231])
+            final_list.append(new_list[231:252])
+            final_list.append(new_list[252:273])
+            final_list.append(new_list[273:294])
+            final_list.append(new_list[294:315])
+            final_list.append(new_list[315:336])
+            final_list.append(new_list[336:357])
+            final_list.append(new_list[357:378])
+            final_list.append(new_list[378:399])
+            final_list.append(new_list[399:420])
+
+            print('final:',final_list) # remove after
+            self.map = list(final_list)
+
+            print('____________________________') # remove
+            self.update_map()
+            # Add pacman and ghost, tell ghost to choose direction
+            self.pacman = Player(self, 1, 1, 20)
+            self.pacmanplayer = self.create_oval(self.pacman.x * self.cellwidth, self.pacman.y * self.cellwidth,
+                                                 (self.pacman.x * self.cellwidth) + self.cellwidth,
+                                                 (self.pacman.y * self.cellwidth) + self.cellheight, fill="yellow",
+                                                 tags="pacman")
+
+            self.ghost = Ghosts(self, 10, 6, 20)
+            self.ghost1 = self.create_oval(self.ghost.x * self.cellwidth, self.ghost.y * self.cellwidth,
+                                           (self.ghost.x * self.cellwidth) + self.cellwidth,
+                                           (self.ghost.y * self.cellwidth) + self.cellheight, fill="magenta",
+                                           tags="ghost")
+            # Start Ghosts @nilabh
+            ghost_choose_direction()
+
+
+        def openfile():
+            print('opening file...')
+            self.control.opener()
+            load_game()
 
         def quit_game():
             print("quit game")
+            self.control.quitter()
 
 
         def killed():
@@ -575,7 +642,7 @@ class GameBoard(tk.Canvas):
         file_option = Menu(mainmenu, tearoff=True)
         mainmenu.add_cascade(label="File", menu=file_option)
         file_option.add_cascade(label="Save Game", command=save_game)
-        file_option.add_cascade(label="Load Game", command=load_game)
+        file_option.add_cascade(label="Load Game", command=openfile)
         file_option.add_cascade(label="Quit Game", command=quit_game)
 
         self.map = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -659,7 +726,7 @@ class GameBoard(tk.Canvas):
                     y2 = y1 + self.cellheight
 
                     if self.map[row][column] == 1:
-                        wall = self.create_rectangle(x1, y1, x2, y2, fill="blue", tags=str(self.map[row][column]))
+                        wall = self.create_rectangle(x1, y1, x2, y2, fill="navy", tags=str(self.map[row][column]))
                         self.tag_bind(wall, '<Button-1>', lambda event, tag=self.itemcget(wall, "tags"):
                         self.clicked(tag))
 
@@ -700,68 +767,4 @@ class GameBoard(tk.Canvas):
         print(tag)
 
 
-
-class ValidEntry(ttk.Entry):
-
-    def __init__(self, parent, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
-        self.config(
-            validate='all',
-            validatecommand=(self.register(self._validate),
-                '%P', '%s', '%S', '%V', '%i', '%d'),
-            invalidcommand=(self.register(self._on_invalid), '%P', '%s', '%S',
-                            '%V', '%i', '%d')
-
-            )
-        self.error = tk.StringVar()
-        self.data = tk.StringVar()
-        self.config(textvariable = self.data)
-
-    def Get(self,*args):
-        return self.data.get()
-
-    def _toggle_error(self, error=''):
-
-        self.error.set(error)
-        if error:
-            self.config(foreground='red')
-        else:
-            self.config(foreground='black')
-
-    def _validate(self, proposed, current, ckey, event, index, action):
-
-        self._toggle_error()
-        valid = True
-
-        if event == 'key':
-            if action == '0':
-                valid = True
-            else :
-                valid = self._key_validate(proposed, current, ckey, event, index, action)
-
-
-        elif event == 'focusout':
-
-            valid = self._focusout_validate(event)
-
-
-        return valid
-
-    def _on_invalid(self, proposed, current, ckey, event, index, action):
-
-        if event != 'key':
-            self._toggle_error(self.ErrMsg)
-
-    def _focusout_validate(self, **kwargs):
-        return True
-
-    def _key_validate(self, **kwargs):
-        return True
-
-
-
-class ValidButton(tk.Button):
-
-    def __init__(self, parent, cmd='',*args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
 
