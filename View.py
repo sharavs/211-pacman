@@ -4,7 +4,7 @@ from tkinter import ttk
 from collections import defaultdict
 from tkinter import messagebox
 from tkinter import filedialog
-import pygame
+#import pygame
 import csv
 import os
 import os.path
@@ -170,12 +170,90 @@ class GameBoard(tk.Canvas):
         super().__init__(parent, *args, **kwargs,width=500,height=500,bg="black")
 
         self.control = parent
-
+        self.filecontent = []
         def save_game():
             print("save game")
+            self.control.save()
 
-        def load_game():
+        def lister(x):
+            if isinstance(x, list):
+                return map(lister,x)
+            else:
+                return int(x)
+
+        def load_game(*args):
             print("load game")
+
+            self.data = self.control.load()  # data retrieves its values from self.control (controller parent)
+            wordlist = self.data
+
+            self.score = wordlist[0][1:-1]
+            self.map = []
+            final_list =[]
+            new_list = []
+            i = wordlist[1][1:-1]
+            for var in i:
+                for col in var:
+                    if col == ' ' or col == '[' or col == ']' or col == ',':
+                        print('char')
+                        pass
+                    elif col == '1' or '2' or '0':
+                        print(col)
+                        new_list.append(int(col))
+                    else:
+                        pass
+            print(type(new_list), new_list)
+            # Append to final_list
+            final_list.append(new_list[0:20])
+            final_list.append(new_list[21:42])
+            final_list.append(new_list[43:64])
+            final_list.append(new_list[65:86])
+            final_list.append(new_list[87:108])
+            final_list.append(new_list[109:130])
+            final_list.append(new_list[131:152])
+            final_list.append(new_list[153:174])
+            final_list.append(new_list[175:196])
+            final_list.append(new_list[197:218])
+
+            final_list.append(new_list[219:240])
+            final_list.append(new_list[241:262])
+            final_list.append(new_list[263:284])
+            final_list.append(new_list[285:306])
+            final_list.append(new_list[307:328])
+
+            final_list.append(new_list[329:340])
+            final_list.append(new_list[341:362])
+            final_list.append(new_list[363:384])
+            final_list.append(new_list[385:406])
+            final_list.append(new_list[407:428])
+
+            print('final:',final_list)
+            self.map = list(final_list)
+
+
+
+           # print(lister(i))
+            print('____________________________')
+
+
+
+            """
+            self.map.split("', '")
+            #self.map = list(self.map)
+            self.map = "[{}]".format(self.map)
+            print(self.map[0], self.map[1], self.map[2])
+            print(self.score,type(self.map),self.map)
+            """
+            # Run with new data
+            self.update_map()
+
+        def openfile():
+            print("Opening file...")
+            self.control.opener()  # directly call opener() in self.control (controller)
+            load_game()
+
+
+
 
         def quit_game():
             print("quit game")
@@ -255,7 +333,7 @@ class GameBoard(tk.Canvas):
         file_option = Menu(mainmenu, tearoff=True)
         mainmenu.add_cascade(label="File", menu=file_option)
         file_option.add_cascade(label="Save Game", command=save_game)
-        file_option.add_cascade(label="Load Game", command=load_game)
+        file_option.add_cascade(label="Load Game", command=openfile)
         file_option.add_cascade(label="Quit Game", command=quit_game)
 
         self.map = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -312,6 +390,10 @@ class GameBoard(tk.Canvas):
         self.score_text = self.create_text(50,420,fill="white",text="SCORE: "+str(self.score))
     def update_map(self):
         try:
+<<<<<<< Updated upstream
+=======
+            #move1() # remove later
+>>>>>>> Stashed changes
             self.delete("all")
             self.score_text = self.create_text(50, 420, fill="white", text="SCORE: "+str(self.score))
             for row in range(20):
@@ -341,6 +423,10 @@ class GameBoard(tk.Canvas):
                                                   (self.pacman_newy * self.cellwidth) + self.cellheight, fill="yellow",
                                                   tags="pacman")
             self.bind_all('<Key>', move)
+<<<<<<< Updated upstream
+=======
+            print(self.map,self.score)
+>>>>>>> Stashed changes
 
         except Exception as e:
             pass
