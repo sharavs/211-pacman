@@ -16,7 +16,8 @@ class Application(tk.Tk):
     def gameover(self):
         messagebox.showinfo('Game Over', 'The ghosts got you, wasted...')
 
-
+    def quit(self):
+        self.gameboard.quit()
         
             
                  
