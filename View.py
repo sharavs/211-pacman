@@ -158,7 +158,6 @@ class gameboard():
     pygame.quit()
 '''
 
-
 class Player():
     def __init__(self,parent,x,y,speed):
         self.x = x
@@ -182,7 +181,10 @@ class GameBoard(tk.Canvas):
         self.current = (0,0)
 
         self.control = parent
+        master
         parent.title('Pacmac HD 2020.v3')
+
+        parent.title("Pac-Man HD")
         self.direction = None
         self.previous = None
         self.previous2 = None
@@ -359,18 +361,25 @@ class GameBoard(tk.Canvas):
 
 
 
+        # SEARCH FILE
+            print('Opening File...')
+            self.control.opener()
+            load_game()
+
+        def load_game():
+        # LOAD SAVED GAME
+            print("Load Game")
 
         def quit_game():
-            print("quit game")
-
-        def killed():
-            self.control.gameover()
+        # QUIT
+            print("Quit Game")
 
         #CHECKS_LIVES
         def check_lives():
+        # CHECK PAC-MAN LIFE
             if self.lives == 0:
-                ###GAMEOVER SCREEN
                 print("LOST")
+                self.killed()
             else:
                 pass
 
@@ -405,15 +414,17 @@ class GameBoard(tk.Canvas):
                     self.level = 5
                     init()
             else:
-                if self.score == 1040:
-                    ##QUIT GAME SCREEN
+                if self.score == 1039:
+                    ## GAME OVER - FINISHED
                     print("FINISHED")
+                    self.killed()
                 else:
                     pass
 
         #########################
-        ##PLAYER MOVE FUNCTIONS##
+        # PLAYER MOVE FUNCTIONS #
         #########################
+        
         def moveright():
             coords = self.coords(self.pacmanplayer)
             y = int(coords[0] / 20)
@@ -845,7 +856,7 @@ class GameBoard(tk.Canvas):
                 ghost_choose_direction3()
 
 
-        #MAINMENU CODE
+        #MAIN MENU CODE
         mainmenu = Menu(self)
         parent.config(menu=mainmenu)
         file_option = Menu(mainmenu, tearoff=True)
@@ -998,8 +1009,17 @@ class GameBoard(tk.Canvas):
         print(tag)
 
     def save_game(self):
-        print("save game")
+        print("Save Game")
 
+    # INVOKE GAME OVER SCREEN
+    def killed(self):
+        self.control.gameover()
+
+    ############################
+    #### SCREENS START HERE ####
+    ############################
+
+# BASE SCREEN CLASS
 class BaseScreen    (
     tk.Frame    ):
     def __init__(self, parent, *args, **kwargs):
@@ -1043,6 +1063,7 @@ class BaseScreen    (
         self._frame = tk.Frame(self,bg="black")
         self._frame.place(relx=0.5, rely=0.5, anchor=CENTER)
 
+    # PAC-MAN GRAPHIC
     def _add_image(self):
         img = Image.open("pac-man.png")
         img = img.resize((192, 140),Image.ANTIALIAS)
@@ -1052,6 +1073,7 @@ class BaseScreen    (
         self._image.image = img
         self._image.grid(row=0,column=1)
 
+# HOME SCREEN (W/ MAIN MENU)
 class StartScreen   (
     BaseScreen   ):
     def __init__(self, parent, *args, **kwargs):
@@ -1072,6 +1094,7 @@ class StartScreen   (
             command= self.control.quitter)
         self._button_quit.grid(row=4,column=1,sticky= 'w')
 
+# HELP SCREEN (INSTRUCTIONS/ABT)
 class HelpScreen(
     BaseScreen   ):
     def __init__(self, parent, *args, **kwargs):
@@ -1096,6 +1119,7 @@ class HelpScreen(
             command = lambda : self.control.show_screen(self.control.start_screen))
         self._button_quit.grid(row=5,column=1)
 
+# GAME OVER SCREEN (SCORE, MAIN MENU)
 class OverScreen    (
     BaseScreen   ):
     def __init__(self, parent, *args, **kwargs):
@@ -1116,6 +1140,7 @@ class OverScreen    (
             command = lambda : self.control.show_screen(self.control.start_screen))
         self._button_quit.grid(row=3,column=1)
 
+# LOADING SCREEN - IN CASE OF LOAD/RENDER TIME TO LOAD GAME
 class LoadingScreen    (
     BaseScreen   ):
     def __init__(self, parent, *args, **kwargs):
