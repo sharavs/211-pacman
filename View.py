@@ -14,6 +14,8 @@ import re
 import time
 import threading
 from PIL import ImageTk, Image
+import subprocess
+
 
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -360,10 +362,12 @@ class GameBoard(tk.Canvas):
             print("quit game")
 
         def killed():
+            subprocess.call(["afplay","audio/player_loses.wav"])
             self.control.gameover()
 
         def check_lives():
             if self.lives == 0:
+                subprocess.call(["afplay","audio/game_over.wav"])
                 ###GAMEOVER SCREEN
                 print("LOST")
             else:
@@ -400,6 +404,7 @@ class GameBoard(tk.Canvas):
                     init()
             else:
                 if self.score == 1040:
+                    subprocess.call(["afplay","audio/player_wins.wav"])
                     ##QUIT GAME SCREEN
                     print("FINISHED")
                 else:
@@ -419,6 +424,7 @@ class GameBoard(tk.Canvas):
                 self.pacman_newy = next_right[0]
                 if (self.pacman_newx * self.cellwidth == self.ghost_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost_newy * self.cellheight) or (self.pacman_newx*self.cellwidth == self.ghost2_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost2_newy*self.cellheight) or (self.pacman_newx * self.cellwidth == self.ghost3_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost3_newy * self.cellheight):
                     self.lives -=1
+                    subprocess.call(["afplay","audio/ghost_eats_pacman.wav"])                    
                     check_lives()
                     init()
                 if (self.map[next_right[0]][next_right[1]] == 2):
@@ -445,6 +451,7 @@ class GameBoard(tk.Canvas):
                     self.pacman_newy = next_left[0]
                     if (self.pacman_newx * self.cellwidth == self.ghost_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost_newy * self.cellheight) or (self.pacman_newx*self.cellwidth == self.ghost2_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost2_newy*self.cellheight) or (self.pacman_newx * self.cellwidth == self.ghost3_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost3_newy * self.cellheight):
                         self.lives -= 1
+                        subprocess.call(["afplay","audio/ghost_eats_pacman.wav"])
                         check_lives()
                         init()
                     if (self.map[next_left[0]][next_left[1]] == 2):
@@ -469,6 +476,7 @@ class GameBoard(tk.Canvas):
                 self.pacman_newy = next_down[0]
                 if (self.pacman_newx * self.cellwidth == self.ghost_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost_newy * self.cellheight) or (self.pacman_newx * self.cellwidth == self.ghost2_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost2_newy * self.cellheight) or (self.pacman_newx * self.cellwidth == self.ghost3_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost3_newy * self.cellheight):
                     self.lives -=1
+                    subprocess.call(["afplay","audio/ghost_eats_pacman.wav"])
                     check_lives()
                     init()
                 if (self.map[next_down[0]][next_down[1]] == 2):
@@ -494,6 +502,7 @@ class GameBoard(tk.Canvas):
                 self.pacman_newy = next_up[0]
                 if (self.pacman_newx * self.cellwidth == self.ghost_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost_newy * self.cellheight) or (self.pacman_newx*self.cellwidth == self.ghost2_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost2_newy*self.cellheight) or (self.pacman_newx * self.cellwidth == self.ghost3_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost3_newy * self.cellheight):
                     self.lives -=1
+                    subprocess.call(["afplay","audio/ghost_eats_pacman.wav"])
                     check_lives()
                     init()
                 if (self.map[next_up[0]][next_up[1]] == 2):
