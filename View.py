@@ -183,7 +183,7 @@ class GameBoard(tk.Canvas):
         self.direction = None
         self.previous = None
         self.direction_list = ['Up', 'Down', 'Right', 'Left']
-<<<<<<< HEAD
+
         self.filecontent = []
 
         def save_game():
@@ -260,13 +260,12 @@ class GameBoard(tk.Canvas):
             print('opening file...')
             self.control.opener()
             load_game()
-=======
+
         self.lives = 3
 
         def load_game():
             print("load game")
 
->>>>>>> parent of bbfbc1e... Merge branch 'master' into nilabh_create_characters_branch
 
         def quit_game():
             print("quit game")
@@ -274,68 +273,6 @@ class GameBoard(tk.Canvas):
 
         def killed():
             self.control.gameover()
-
-        '''
-        def move1():
-            coords1 = self.coords(self.ghostplayer)
-            y = int(coords1[0] / 20)
-            x = int(coords1[1] / 20)
-            next_right = (x,y+1)
-            next_left = (x,y-1)
-            next_down = (x+1,y)
-            next_up = (x-1, y)
-            self.current = (x, y)
-            if self.current < (18,18):
-                if (self.map[next_right[0]][next_right[1]] != 1) and (self.map[next_left[0]][next_left[1]] != 1):
-                    self.move(self.ghostplayer, +self.ghost.speed, 0)
-                    #print(self.current)
-                elif (self.map[next_right[0]][next_right[1]] == 1):
-                    self.move(self.ghostplayer, 0, +self.ghost.speed)
-                    #print(self.current)
-                elif (self.map[next_right[0]][next_right[1]] == 1) and (self.map[next_down[0]][next_down[1]] == 1):
-                    self.move(self.ghostplayer, 0, +15)
-                    #print(self.current)
-                elif self.current==(19, 19):
-                    #print('found')
-                    self.move(self.ghostplayer, -self.ghost.speed, 0)
-                #elif (self.map[next_left[0]][next_left[1]] != 1):
-                #    self.move(self.ghostplayer, 0, -self.ghost.speed)
-                else:
-                    #print('else')
-                    if (self.map[next_left[0]][next_left[1]] != 1):
-                        self.move(self.ghostplayer, 0, -self.ghost.speed)
-                    else:
-                        self.move(self.ghostplayer, 0, +self.ghost.speed)
-
-            else:
-                #self.move(self.ghostplayer, -self.ghost.speed*17, -self.ghost.speed*6)
-                pass
-            self.after(100,move1)
-            
-            
-            #self.direction = random.choice(('left','right','up','down','left','right','up','down'))
-            current = (x, y)
-
-            if self.direction=='down' and (self.map[next_down[0]][next_down[1]] != 1):
-                self.move(self.ghostplayer, 0, +self.ghost.speed)
-                print('downward')
-            elif self.direction=='right' and (self.map[next_right[0]][next_right[1]] != 1):
-                self.move(self.ghostplayer, +self.ghost.speed, 0)
-                print('rightward')
-            elif self.direction == 'up' and (self.map[next_up[0]][next_up[1]] != 1):
-                self.move(self.ghostplayer, 0, +self.ghost.speed)
-                print('upward')
-            elif self.direction=='left' and (self.map[next_left[0]][next_left[1]] != 1):
-                self.move(self.ghostplayer, +self.ghost.speed, 0)
-                print('leftward')
-
-            else:
-                self.direction = random.choice(('left','right','up','down'))
-                print('passing..', self.direction)
-
-            self.after(200, move1)
-            #self.update_map()
-        '''
 
 
         def moveright():
@@ -519,9 +456,6 @@ class GameBoard(tk.Canvas):
                 else:
                     ghostmoveleft()
 
-            #print(self.ghost_direction)
-
-
 
         def move_ghost1():
             coords = self.coords(self.ghost1)
@@ -550,111 +484,15 @@ class GameBoard(tk.Canvas):
             print(self.ghost_direction)
 
 
-        '''
-        def move(event):
-            key_pressed = event.keysym
-            print(key_pressed)
-            coords = self.coords(self.pacmanplayer)
-            y = int(coords[0] / 20)
-            x = int(coords[1] / 20)
-            #print((x, y))
-
-            next_right = (x,y+1)
-            next_left = (x,y-1)
-            next_down = (x+1,y)
-            next_up = (x-1, y)
-            current = (x, y)
-            if current == self.current:
-                print("Game Over")
-                killed()
-
-            # Player
-            if event.keysym == 'Up':
-                #while (self.map[next_up[0]][next_up[1]] != 1):
-                if (self.map[next_up[0]][next_up[1]] != 1):
-                    self.move(self.pacmanplayer,0,-self.pacman.speed)
-                    self.pacman_newx = next_up[1]
-                    self.pacman_newy = next_up[0]
-                    if (self.map[next_up[0]][next_up[1]] == 2):
-                        self.score += 1
-                        self.map[next_up[0]][next_up[1]] = 0
-                        self.update_map()
-                    else:
-                        pass
-
-                    coords = self.coords(self.pacmanplayer)
-                    y = int(coords[0] / 20)
-                    x = int(coords[1] / 20)
-                    next_up = (x - 1, y)
-
-            if event.keysym == 'Down':
-                #while (self.map[next_down[0]][next_down[1]] != 1):
-                if (self.map[next_down[0]][next_down[1]] != 1):
-                    self.move(self.pacmanplayer,0,self.pacman.speed)
-                    self.pacman_newx = next_down[1]
-                    self.pacman_newy = next_down[0]
-                    if (self.map[next_down[0]][next_down[1]] == 2):
-                        self.score += 1
-                        self.map[next_down[0]][next_down[1]] = 0
-                        self.update_map()
-                    else:
-                        pass
-                    coords = self.coords(self.pacmanplayer)
-                    y = int(coords[0] / 20)
-                    x = int(coords[1] / 20)
-                    next_down = (x + 1, y)
-
-            if event.keysym == 'Left':
-                #while(self.map[next_left[0]][next_left[1]] != 1):
-                if(self.map[next_left[0]][next_left[1]] != 1):
-                    self.move(self.pacmanplayer, -self.pacman.speed, 0)
-                    self.pacman_newx = next_left[1]
-                    self.pacman_newy = next_left[0]
-                    if (self.map[next_left[0]][next_left[1]] == 2):
-                        self.score += 1
-                        self.map[next_left[0]][next_left[1]] = 0
-                        self.update_map()
-                    else:
-                        pass
-                    coords = self.coords(self.pacmanplayer)
-                    y = int(coords[0] / 20)
-                    x = int(coords[1] / 20)
-                    next_left = (x, y - 1)
-
-            if event.keysym == 'Right':
-                #while(self.map[next_right[0]][next_right[1]] != 1):
-                if(self.map[next_right[0]][next_right[1]] != 1):
-                    self.move(self.pacmanplayer, +self.pacman.speed, 0)
-                    time.sleep(0.01)
-                    self.pacman_newx = next_right[1]
-                    self.pacman_newy = next_right[0]
-                    if (self.map[next_right[0]][next_right[1]] == 2):
-                        self.score += 1
-                        self.map[next_right[0]][next_right[1]] = 0
-                        self.update_map()
-                    else:
-                        pass
-                    coords = self.coords(self.pacmanplayer)
-                    y = int(coords[0] / 20)
-                    x = int(coords[1] / 20)
-                    next_right = (x, y + 1)
-            self.after(50,self.move)
-
-            print(self.score)
-            '''
-
-
         mainmenu = Menu(self)
         parent.config(menu=mainmenu)
         file_option = Menu(mainmenu, tearoff=True)
         mainmenu.add_cascade(label="File", menu=file_option)
-<<<<<<< HEAD
+
         file_option.add_cascade(label="Save Game", command=save_game)
         file_option.add_cascade(label="Load Game", command=openfile)
-=======
         file_option.add_cascade(label="Save Game")
         file_option.add_cascade(label="Load Game", command=load_game)
->>>>>>> parent of bbfbc1e... Merge branch 'master' into nilabh_create_characters_branch
         file_option.add_cascade(label="Quit Game", command=quit_game)
 
         self.map = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -775,16 +613,13 @@ class GameBoard(tk.Canvas):
         except Exception as e:
             pass
 
-<<<<<<< HEAD
+
     def clicked(self,tag):
         print(tag)
 
-
-=======
     def save_game(self):
         print("save game")
 
     def clicked(self,tag):
         print("clicked")
->>>>>>> parent of bbfbc1e... Merge branch 'master' into nilabh_create_characters_branch
 
