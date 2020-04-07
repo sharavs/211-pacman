@@ -1,7 +1,4 @@
 
-
-# These maps can be implemented using an if/elif loop to determine which level was selected by the player
-
 # Map 2 
 map2 =   [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
           [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
@@ -94,22 +91,3 @@ map5 =  [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
          [1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1],
          [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
 
-
-
-
-#This code is to be used for audio. Both the controller and view should import this along with the other modules. The rest of the lines just need to be placed where those events occur. 
-
-import subprocess
-
-
-subprocess.call(["afplay", "audio/game_over.wav"])
-
-subprocess.call(["afplay", "audio/game_starting.wav"])
-
-subprocess.call(["afplay", "audio/ghost_eats_pacman.wav"])
-
-subprocess.call(["afplay", "audio/pacman_eating.wav"])
-
-subprocess.call(["afplay", "audio/player_loses.wav"])
-
-subprocess.call(["afplay", "audio/player_wins.wav"])
