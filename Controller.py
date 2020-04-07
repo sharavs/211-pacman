@@ -3,6 +3,8 @@ import View as v
 from tkinter import filedialog, messagebox
 import tkinter as tk
 from time import sleep
+import subprocess
+
 
 class Application(tk.Tk):
     
@@ -22,11 +24,13 @@ class Application(tk.Tk):
         self.currfile = model.filename
 
         self.show_screen(self.start_screen)
+        
 
     def new_game    (
         self    ):
         self.gameboard = v.GameBoard(self)
         self.show_screen(self.gameboard)
+        subprocess.call(["afplay","audio/game_starting.wav"])
 
     def show_screen (
         self    ,

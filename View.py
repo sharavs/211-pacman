@@ -14,6 +14,7 @@ import re
 import time
 import threading
 from PIL import ImageTk, Image
+import subprocess
 
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -272,6 +273,7 @@ class GameBoard(tk.Canvas):
             print("quit game")
 
         def killed():
+            subprocess.call(["afplay","audio/game_over.wav"])
             self.control.gameover()
 
 
@@ -288,6 +290,7 @@ class GameBoard(tk.Canvas):
                     self.score += 1
                     self.map[next_right[0]][next_right[1]] = 0
                     self.update_map()
+                    subprocess.call(["afplay","audio/pacman_eating_shortest.wav"])
                 else:
                     pass
                 self.after(100, moveright)
@@ -309,6 +312,7 @@ class GameBoard(tk.Canvas):
                         self.score += 1
                         self.map[next_left[0]][next_left[1]] = 0
                         self.update_map()
+                        subprocess.call(["afplay","audio/pacman_eating_shortest.wav"])
                     else:
                         pass
                 self.after(100,moveleft)
@@ -328,6 +332,7 @@ class GameBoard(tk.Canvas):
                     self.score += 1
                     self.map[next_down[0]][next_down[1]] = 0
                     self.update_map()
+                    subprocess.call(["afplay","audio/pacman_eating_shortest.wav"])
                 else:
                     pass
                 self.after(100,movedown)
@@ -348,6 +353,7 @@ class GameBoard(tk.Canvas):
                     self.score += 1
                     self.map[next_up[0]][next_up[1]] = 0
                     self.update_map()
+                    subprocess.call(["afplay","audio/pacman_eating_shortest.wav"])
                 else:
                     pass
                 self.after(100,moveup)
