@@ -11,7 +11,6 @@ import os.path
 import random
 import re
 import time
-import threading
 
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -188,7 +187,11 @@ class GameBoard(tk.Canvas):
         def save_game():
             print("save game")
             self.control.save()
+        def load_game():
+            return self.control.load()
 
+
+        '''
         def load_game(*args):
             print("load game")
 
@@ -253,13 +256,14 @@ class GameBoard(tk.Canvas):
                                            tags="ghost")
             # Start Ghosts @nilabh
             ghost_choose_direction()
+            '''
 
-
+        '''
         def openfile():
             print('opening file...')
             self.control.opener()
             load_game()
-
+        '''
         def quit_game():
             print("quit game")
             self.control.quitter()
@@ -642,7 +646,7 @@ class GameBoard(tk.Canvas):
         file_option = Menu(mainmenu, tearoff=True)
         mainmenu.add_cascade(label="File", menu=file_option)
         file_option.add_cascade(label="Save Game", command=save_game)
-        file_option.add_cascade(label="Load Game", command=openfile)
+        file_option.add_cascade(label="Load Game", command=load_game)
         file_option.add_cascade(label="Quit Game", command=quit_game)
 
         self.map = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -726,7 +730,7 @@ class GameBoard(tk.Canvas):
                     y2 = y1 + self.cellheight
 
                     if self.map[row][column] == 1:
-                        wall = self.create_rectangle(x1, y1, x2, y2, fill="navy", tags=str(self.map[row][column]))
+                        wall = self.create_rectangle(x1, y1, x2, y2, fill="blue", tags=str(self.map[row][column]))
                         self.tag_bind(wall, '<Button-1>', lambda event, tag=self.itemcget(wall, "tags"):
                         self.clicked(tag))
 
