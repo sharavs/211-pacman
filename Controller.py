@@ -18,7 +18,7 @@ class Application(tk.Tk):
 
         self.score = self.gameboard.score
         self.map = self.gameboard.map
-        model = m.TXTModel('pacman.db')
+        model = m.SQLModel('pacman.db')
         self.currfile = model.filename
 
         self.show_screen(self.start_screen)
@@ -28,7 +28,7 @@ class Application(tk.Tk):
         self.show_screen(self.gameboard)
 
     def show_screen(self,screen):
-        if self.current_screen  == screen   :
+        if self.current_screen == screen:
             return
         if self.current_screen != None  :
             self.current_screen.grid_forget()
@@ -38,17 +38,19 @@ class Application(tk.Tk):
     def save(self):
         self.score = self.gameboard.score
         self.map = self.gameboard.map
-        model = m.TXTModel(self.currfile)
+        # Call Save_game in model with score and map
+        model = m.SQLModel(self.currfile)
         model.save_game(self.score, self.map)
 
     def load(self):
-        model = m.TXTModel(self.currfile)
+        model = m.SQLModel(self.currfile)
+        # get score and map from load, game (score,map)
         stuff = model.load_game()
         self.show_screen(self.gameboard)
         return stuff
 
     def opener(self):
-        model = m.TXTModel(self.currfile)
+        model = m.SQLModel(self.currfile)
         while self == 'demo.txt':  # If self still default file break askopenfilename
             break
         else:

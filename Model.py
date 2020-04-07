@@ -8,9 +8,9 @@ import sqlite3
 
 con = sqlite3.connect('pacman.db')
 
-class TXTModel:
+class SQLModel:
 
-    ''' CSV Storage'''
+    ''' SQL Database Storage'''
 
     fields = {'ID': None, 'Password': None, 'Text': None}
 

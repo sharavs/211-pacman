@@ -182,6 +182,7 @@ class GameBoard(tk.Canvas):
         self.current = (0,0)
 
         self.control = parent
+        parent.title('Pacmac HD 2020.v3')
         self.direction = None
         self.previous = None
         self.previous2 = None
