@@ -350,14 +350,11 @@ class GameBoard(tk.Canvas):
 
         def openfile():
             print('opening file...')
-            #self.control.opener()
-            #load_game()
-
-
 
 
         def quit_game():
             print("quit game")
+            self.control.quitter()
 
         def killed():
             self.control.gameover()
@@ -817,11 +814,9 @@ class GameBoard(tk.Canvas):
         file_option = Menu(mainmenu, tearoff=True)
         mainmenu.add_cascade(label="File", menu=file_option)
 
-
         file_option.add_cascade(label="Save Game", command=save_game)
         file_option.add_cascade(label="Load Game", command=load_game)
         file_option.add_cascade(label="Quit Game", command=quit_game)
-
 
         self.map = self.level_list[0]
 
@@ -1013,8 +1008,7 @@ class BaseScreen    (
         self._image.image = img
         self._image.grid(row=0,column=1)
 
-class StartScreen   (
-    BaseScreen   ):
+class StartScreen(BaseScreen):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self._add_image()
@@ -1022,7 +1016,7 @@ class StartScreen   (
             command = self.control.new_game )
         self._button_new.grid(row=1,column=1,sticky= 'w')
         
-        self._button_load   = Button(self._frame, text= "LOAD GAME"   ,style = 'TButton')
+        self._button_load   = Button(self._frame, text= "LOAD GAME"   ,style = 'TButton', command=self.control.load)
         self._button_load.grid(row=2,column=1,sticky= 'w')
 
         self._button_help   = Button(self._frame, text= "HELP"        ,style = 'TButton',

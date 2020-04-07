@@ -70,10 +70,7 @@ class Application(tk.Tk):
             self.destroy()
         else:
             messagebox.showinfo('Return', 'returning user to PacMan...')
-        self.gameboard = v.GameBoard(self)
-        self.gameboard.grid()
 
-        #self.game = v.gameboard(self)
     def gameover(self):
         self.show_screen(self.over_screen)
                  
