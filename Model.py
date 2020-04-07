@@ -22,8 +22,6 @@ class TXTModel:
         self.tstring = time.strftime("%Y%m%d-%H%M%S")
 
     def save_game(self, score, map):
-
-        print(score, map)
         try:
 
             cur = con.cursor()
@@ -38,7 +36,6 @@ class TXTModel:
             cur = con.cursor()
             cur.execute("INSERT INTO game (score , map) VALUES (?,?)",
                         (score, str(map)))
-
             cur.execute("SELECT * FROM game")
             rows = cur.fetchall()
             # self.game_list = []
@@ -57,25 +54,23 @@ class TXTModel:
     def load_game(self):
         load_list = []
         try:
-
             cur = con.cursor()
             print('Connected Successfully')
             cur.execute("CREATE TABLE game(score INT, map STR)")
-
+            print('Recent Games:')
             rows = cur.fetchall()
             for row in rows:
                 load_list.append((row[0], row[1]))
             for i in load_list:
                 print(i)
-            print('still here')
 
-
-
+        # If file exists
         except sqlite3.Error as error:
             print('SQLite Error: ', error)
             cur = con.cursor()
 
             cur.execute("SELECT * FROM game")
+            print('Recent Games:')
             rows = cur.fetchall()
             for row in rows:
                 load_list.append((row[0], row[1]))
@@ -87,10 +82,7 @@ class TXTModel:
             print(type(map), map)
             return score, map
 
-
         finally:
-            # cur.close()
-            # con.close()
             print('Database closed...')
 
     def filer(self):

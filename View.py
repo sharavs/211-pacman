@@ -214,18 +214,16 @@ class GameBoard(tk.Canvas):
             self.control.save()
 
         def load_game():
-
-            #return self.control.load()
-
             l_score, l_map = self.control.load()
-            #filter1 = list(map)
             filter1 = l_map
             new_list = []
             final_list = []
+
             for var in filter1:
                 if var == ' ' or var == '[' or var == ']' or var == ',':
                     pass
                 else:
+                    # Append var to a new list
                     new_list.append(int(var))
             # Set final_list
             final_list.append(new_list[0:21])
@@ -258,12 +256,11 @@ class GameBoard(tk.Canvas):
             self.pacman.y = 1
             self.update_map()
 
-
         self.lives = 3
-
 
         def quit_game():
             print("quit game")
+            self.control.quitter()
 
         def killed():
             self.control.gameover()

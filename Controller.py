@@ -24,24 +24,23 @@ class Application(tk.Tk):
 
         self.show_screen(self.start_screen)
 
-    def new_game    (
-        self    ):
+    def new_game(self):
         self.gameboard = v.GameBoard(self)
         self.show_screen(self.gameboard)
 
-    def show_screen (
-        self    ,
-        screen  ):
-        if self.current_screen  == screen   :
+    def show_screen(self,screen):
+        if self.current_screen == screen :
             return
-        if self.current_screen != None  :
+        if self.current_screen != None:
             self.current_screen.grid_forget()
         self.current_screen = screen
         self.current_screen.grid(column=1, row=1, sticky='news')
     
     def save(self):
+        # Retrieve Score and Map from View
         self.score = self.gameboard.score
         self.map = self.gameboard.map
+        # Call model save function with Score and Map
         model = m.TXTModel(self.currfile)
         model.save_game(self.score, self.map)
 
@@ -49,6 +48,7 @@ class Application(tk.Tk):
         model = m.TXTModel(self.currfile)
         stuff = model.load_game()
         self.show_screen(self.gameboard)
+        # Return score, map
         return stuff
 
     def opener(self):
@@ -75,7 +75,6 @@ class Application(tk.Tk):
         self.gameboard = v.GameBoard(self)
         self.gameboard.grid()
 
-        #self.game = v.gameboard(self)
     def gameover(self):
         self.show_screen(self.over_screen)
                  
