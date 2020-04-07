@@ -181,6 +181,9 @@ class GameBoard(tk.Canvas):
         self.current = (0,0)
 
         self.control = parent
+        master
+        parent.title('Pacmac HD 2020.v3')
+
         parent.title("Pac-Man HD")
         self.direction = None
         self.previous = None
@@ -191,6 +194,10 @@ class GameBoard(tk.Canvas):
         self.level = 1
         self.direction_list = ['Up', 'Down', 'Right', 'Left']
         self.lives = 3
+
+        #############################
+        ##LEVEL LIST FOR THE LEVELS##
+        #############################
         self.level_list  = [[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
                     [1,0,2,2,2,2,2,1,2,2,2,2,2,1,2,2,2,2,2,2,1],
                     [1,2,1,1,1,1,2,1,1,1,2,1,1,1,2,1,1,1,1,2,1],
@@ -302,29 +309,21 @@ class GameBoard(tk.Canvas):
             print("save game")
             self.control.save()
 
-        def load_game(*args):
-            print("load game")
+        def load_game():
+            common = 0
+            #return self.control.load()
 
-            self.data = self.control.load()  # data retrieves its values from self.control (controller parent)
-            wordlist = self.data
-
-            self.score = int(wordlist[0][1:-1])
-            self.map = []
-            final_list =[]
+            l_score, l_map = self.control.load()
+            #filter1 = list(map)
+            filter1 = l_map
             new_list = []
-            i = wordlist[1][1:-1]
-            for var in i:
-                for col in var:
-                    if col == ' ' or col == '[' or col == ']' or col == ',':
-                        #print('char')
-                        pass
-                    elif col == '1' or '2' or '0':
-                        #print(col)
-                        new_list.append(int(col))
-                    else:
-                        pass
-            print(type(new_list), new_list)
-            # Append to final_list
+            final_list = []
+            for var in filter1:
+                if var == ' ' or var == '[' or var == ']' or var == ',':
+                    pass
+                else:
+                    new_list.append(int(var))
+            # Set final_list
             final_list.append(new_list[0:21])
             final_list.append(new_list[21:42])
             final_list.append(new_list[42:63])
@@ -347,27 +346,21 @@ class GameBoard(tk.Canvas):
             final_list.append(new_list[378:399])
             final_list.append(new_list[399:420])
 
-            print('final:',final_list) # remove after
-            self.map = list(final_list)
+            print('final:', final_list)  # remove after
+            self.score = l_score
+            self.map = final_list
 
-            print('____________________________') # remove
+            self.pacman.x = 1
+            self.pacman.y = 1
             self.update_map()
-            # Add pacman and ghost, tell ghost to choose direction
-            self.pacman = Player(self, 1, 1, 20)
-            self.pacmanplayer = self.create_oval(self.pacman.x * self.cellwidth, self.pacman.y * self.cellwidth,
-                                                 (self.pacman.x * self.cellwidth) + self.cellwidth,
-                                                 (self.pacman.y * self.cellwidth) + self.cellheight, fill="yellow",
-                                                 tags="pacman")
-
-            self.ghost = Ghosts(self, 10, 6, 20)
-            self.ghost1 = self.create_oval(self.ghost.x * self.cellwidth, self.ghost.y * self.cellwidth,
-                                           (self.ghost.x * self.cellwidth) + self.cellwidth,
-                                           (self.ghost.y * self.cellwidth) + self.cellheight, fill="magenta",
-                                           tags="ghost")
-            # Start Ghosts @nilabh
-            ghost_choose_direction()
 
         def openfile():
+            print('opening file...')
+            #self.control.opener()
+            #load_game()
+
+
+
         # SEARCH FILE
             print('Opening File...')
             self.control.opener()
@@ -381,6 +374,7 @@ class GameBoard(tk.Canvas):
         # QUIT
             print("Quit Game")
 
+        #CHECKS_LIVES
         def check_lives():
         # CHECK PAC-MAN LIFE
             if self.lives == 0:
@@ -389,10 +383,9 @@ class GameBoard(tk.Canvas):
             else:
                 pass
 
+        #DETERMINES WHEN TO CHANGE LEVEL
         def check_score():
-        # LEVELS PROGRESSION
             if self.level == 1:
-                # LEVEL 1 COMPLETE CHECK
                 if self.score != 201:
                     pass
                 else:
@@ -400,7 +393,6 @@ class GameBoard(tk.Canvas):
                     self.level = 2
                     init()
             elif self.level == 2:
-                # LEVEL 2 COMPLETE CHECK
                 if self.score != 412:
                     pass
                 else:
@@ -408,7 +400,6 @@ class GameBoard(tk.Canvas):
                     self.level = 3
                     init()
             elif self.level == 3:
-                # LEVEL 3 COMPLETE CHECK
                 if self.score != 624:
                     pass
                 else:
@@ -416,7 +407,6 @@ class GameBoard(tk.Canvas):
                     self.level = 4
                     init()
             elif self.level == 4:
-                # LEVEL 4 COMPLETE CHECK
                 if self.score != 835:
                     pass
                 else:
@@ -434,6 +424,7 @@ class GameBoard(tk.Canvas):
         #########################
         # PLAYER MOVE FUNCTIONS #
         #########################
+        
         def moveright():
             coords = self.coords(self.pacmanplayer)
             y = int(coords[0] / 20)
@@ -443,6 +434,7 @@ class GameBoard(tk.Canvas):
                 self.move(self.pacmanplayer, +self.pacman.speed, 0)
                 self.pacman_newx = next_right[1]
                 self.pacman_newy = next_right[0]
+                # IF STATEMENT CHECKS COLLISION WITH GHOST
                 if (self.pacman_newx * self.cellwidth == self.ghost_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost_newy * self.cellheight) or (self.pacman_newx*self.cellwidth == self.ghost2_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost2_newy*self.cellheight) or (self.pacman_newx * self.cellwidth == self.ghost3_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost3_newy * self.cellheight):
                     self.lives -=1
                     check_lives()
@@ -469,6 +461,7 @@ class GameBoard(tk.Canvas):
                     self.move(self.pacmanplayer, -self.pacman.speed, 0)
                     self.pacman_newx = next_left[1]
                     self.pacman_newy = next_left[0]
+                    # IF STATEMENT CHECKS COLLISION WITH GHOST
                     if (self.pacman_newx * self.cellwidth == self.ghost_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost_newy * self.cellheight) or (self.pacman_newx*self.cellwidth == self.ghost2_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost2_newy*self.cellheight) or (self.pacman_newx * self.cellwidth == self.ghost3_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost3_newy * self.cellheight):
                         self.lives -= 1
                         check_lives()
@@ -493,6 +486,7 @@ class GameBoard(tk.Canvas):
                 self.move(self.pacmanplayer, 0, self.pacman.speed)
                 self.pacman_newx = next_down[1]
                 self.pacman_newy = next_down[0]
+                # IF STATEMENT CHECKS COLLISION WITH GHOST
                 if (self.pacman_newx * self.cellwidth == self.ghost_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost_newy * self.cellheight) or (self.pacman_newx * self.cellwidth == self.ghost2_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost2_newy * self.cellheight) or (self.pacman_newx * self.cellwidth == self.ghost3_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost3_newy * self.cellheight):
                     self.lives -=1
                     check_lives()
@@ -518,6 +512,7 @@ class GameBoard(tk.Canvas):
                 self.move(self.pacmanplayer, 0, -self.pacman.speed)
                 self.pacman_newx = next_up[1]
                 self.pacman_newy = next_up[0]
+                #IF STATEMENT CHECKS COLLISION WITH GHOST
                 if (self.pacman_newx * self.cellwidth == self.ghost_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost_newy * self.cellheight) or (self.pacman_newx*self.cellwidth == self.ghost2_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost2_newy*self.cellheight) or (self.pacman_newx * self.cellwidth == self.ghost3_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost3_newy * self.cellheight):
                     self.lives -=1
                     check_lives()
@@ -533,7 +528,7 @@ class GameBoard(tk.Canvas):
             else:
                 pass
 
-
+        #DETERMINES WHICH KEY IS PRESSED, AND EXECUTED FUNCTION ACCORDINGLY
         def keypressed(event):
             self.direction = event.keysym
             if self.direction == "Right":
@@ -554,7 +549,7 @@ class GameBoard(tk.Canvas):
             y = int(coords[0] / 20)
             x = int(coords[1] / 20)
             next_down = (x + 1, y)
-
+            # IF GHOST CAN MOVE
             if (self.map[next_down[0]][next_down[1]] != 1):
                 self.move(self.ghost1, 0, +self.ghost.speed)
                 self.ghost_newx = next_down[1]
@@ -575,10 +570,12 @@ class GameBoard(tk.Canvas):
             y = int(coords[0] / 20)
             x = int(coords[1] / 20)
             next_up = (x - 1, y)
+            # IF GHOST CAN MOVE
             if (self.map[next_up[0]][next_up[1]] != 1):
                 self.move(self.ghost1, 0,-self.ghost.speed)
                 self.ghost_newx = next_up[1]
                 self.ghost_newy = next_up[0]
+                #IF STATEMENT CHECKS GHOST COLLISION WITH PACMAN
                 if (self.pacman_newx*self.cellwidth == self.ghost_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost_newy*self.cellheight):
                     self.lives -= 1
                     check_lives()
@@ -595,10 +592,12 @@ class GameBoard(tk.Canvas):
             y = int(coords[0] / 20)
             x = int(coords[1] / 20)
             next_right = (x, y + 1)
+            # IF GHOST CAN MOVE
             if (self.map[next_right[0]][next_right[1]] != 1):
                 self.move(self.ghost1, +self.ghost.speed, 0)
                 self.ghost_newx = next_right[1]
                 self.ghost_newy = next_right[0]
+                # IF STATEMENT CHECKS GHOST COLLISION WITH PACMAN
                 if (self.pacman_newx*self.cellwidth == self.ghost_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost_newy*self.cellheight):
                     self.lives -= 1
                     check_lives()
@@ -614,10 +613,12 @@ class GameBoard(tk.Canvas):
             y = int(coords[0] / 20)
             x = int(coords[1] / 20)
             next_left = (x, y - 1)
+            # IF GHOST CAN MOVE
             if (self.map[next_left[0]][next_left[1]] != 1):
                 self.move(self.ghost1, -self.ghost.speed, 0)
                 self.ghost_newx = next_left[1]
                 self.ghost_newy = next_left[0]
+                # IF STATEMENT CHECKS GHOST COLLISION WITH PACMAN
                 if (self.pacman_newx*self.cellwidth == self.ghost_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost_newy*self.cellheight):
                     self.lives -= 1
                     check_lives()
@@ -629,7 +630,8 @@ class GameBoard(tk.Canvas):
                 ghost_choose_direction()
 
 
-
+        #LOGIC TO GIVE GHOST A RANDOM DIRECTION TO EXECUTE
+        #FUNCTION RUNS AGAIN WHEN GHOST IS STUCK
         def ghost_choose_direction():
 
             self.ghost_direction = random.choice(self.direction_list)
@@ -668,10 +670,12 @@ class GameBoard(tk.Canvas):
             y = int(coords[0] / 20)
             x = int(coords[1] / 20)
             next_down = (x + 1, y)
+            # IF GHOST CAN MOVE
             if (self.map[next_down[0]][next_down[1]] != 1):
                 self.move(self.ghost2, 0, +self.ghost.speed)
                 self.ghost2_newx = next_down[1]
                 self.ghost2_newy = next_down[0]
+                # IF STATEMENT CHECKS GHOST COLLISION WITH PACMAN
                 if (self.pacman_newx*self.cellwidth == self.ghost2_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost2_newy*self.cellheight):
                     self.lives -= 1
                     check_lives()
@@ -688,10 +692,12 @@ class GameBoard(tk.Canvas):
             y = int(coords[0] / 20)
             x = int(coords[1] / 20)
             next_up = (x - 1, y)
+            # IF GHOST CAN MOVE
             if (self.map[next_up[0]][next_up[1]] != 1):
                 self.move(self.ghost2, 0,-self.ghost.speed)
                 self.ghost2_newx = next_up[1]
                 self.ghost2_newy = next_up[0]
+                # IF STATEMENT CHECKS GHOST COLLISION WITH PACMAN
                 if (self.pacman_newx*self.cellwidth == self.ghost2_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost2_newy*self.cellheight):
                     self.lives -= 1
                     check_lives()
@@ -708,10 +714,12 @@ class GameBoard(tk.Canvas):
             y = int(coords[0] / 20)
             x = int(coords[1] / 20)
             next_right = (x, y + 1)
+            # IF GHOST CAN MOVE
             if (self.map[next_right[0]][next_right[1]] != 1):
                 self.move(self.ghost2, +self.ghost.speed, 0)
                 self.ghost2_newx = next_right[1]
                 self.ghost2_newy = next_right[0]
+                # IF STATEMENT CHECKS GHOST COLLISION WITH PACMAN
                 if (self.pacman_newx*self.cellwidth == self.ghost2_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost2_newy*self.cellheight):
                     self.lives -= 1
                     check_lives()
@@ -727,10 +735,12 @@ class GameBoard(tk.Canvas):
             y = int(coords[0] / 20)
             x = int(coords[1] / 20)
             next_left = (x, y - 1)
+            # IF GHOST CAN MOVE
             if (self.map[next_left[0]][next_left[1]] != 1):
                 self.move(self.ghost2, -self.ghost.speed, 0)
                 self.ghost2_newx = next_left[1]
                 self.ghost2_newy = next_left[0]
+                # IF STATEMENT CHECKS GHOST COLLISION WITH PACMAN
                 if (self.pacman_newx*self.cellwidth == self.ghost2_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost2_newy*self.cellheight):
                     self.lives -= 1
                     check_lives()
@@ -764,10 +774,12 @@ class GameBoard(tk.Canvas):
             y = int(coords[0] / 20)
             x = int(coords[1] / 20)
             next_down = (x + 1, y)
+            # IF GHOST CAN MOVE
             if (self.map[next_down[0]][next_down[1]] != 1):
                 self.move(self.ghost3, 0, +self.ghost.speed)
                 self.ghost3_newx = next_down[1]
                 self.ghost3_newy = next_down[0]
+                # IF STATEMENT CHECKS GHOST COLLISION WITH PACMAN
                 if (self.pacman_newx*self.cellwidth == self.ghost3_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost3_newy*self.cellheight):
                     self.lives -= 1
                     check_lives()
@@ -784,10 +796,12 @@ class GameBoard(tk.Canvas):
             y = int(coords[0] / 20)
             x = int(coords[1] / 20)
             next_up = (x - 1, y)
+            #IF GHOST CAN MOVE
             if (self.map[next_up[0]][next_up[1]] != 1):
                 self.move(self.ghost3, 0,-self.ghost.speed)
                 self.ghost3_newx = next_up[1]
                 self.ghost3_newy = next_up[0]
+                # IF STATEMENT CHECKS GHOST COLLISION WITH PACMAN
                 if (self.pacman_newx * self.cellwidth == self.ghost3_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost3_newy * self.cellheight):
                     self.lives -= 1
                     check_lives()
@@ -804,10 +818,12 @@ class GameBoard(tk.Canvas):
             y = int(coords[0] / 20)
             x = int(coords[1] / 20)
             next_right = (x, y + 1)
+            # IF GHOST CAN MOVE
             if (self.map[next_right[0]][next_right[1]] != 1):
                 self.move(self.ghost3, +self.ghost.speed, 0)
                 self.ghost3_newx = next_right[1]
                 self.ghost3_newy = next_right[0]
+                # IF STATEMENT CHECKS GHOST COLLISION WITH PACMAN
                 if (self.pacman_newx*self.cellwidth == self.ghost3_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost3_newy*self.cellheight):
                     self.lives -= 1
                     check_lives()
@@ -823,10 +839,12 @@ class GameBoard(tk.Canvas):
             y = int(coords[0] / 20)
             x = int(coords[1] / 20)
             next_left = (x, y - 1)
+            # IF GHOST CAN MOVE
             if (self.map[next_left[0]][next_left[1]] != 1):
                 self.move(self.ghost3, -self.ghost.speed, 0)
                 self.ghost3_newx = next_left[1]
                 self.ghost3_newy = next_left[0]
+                # IF STATEMENT CHECKS GHOST COLLISION WITH PACMAN
                 if (self.pacman_newx*self.cellwidth == self.ghost3_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost3_newy*self.cellheight):
                     self.lives -= 1
                     check_lives()
@@ -838,24 +856,25 @@ class GameBoard(tk.Canvas):
                 ghost_choose_direction3()
 
 
+        #MAIN MENU CODE
         mainmenu = Menu(self)
         parent.config(menu=mainmenu)
         file_option = Menu(mainmenu, tearoff=True)
         mainmenu.add_cascade(label="File", menu=file_option)
 
+
         file_option.add_cascade(label="Save Game", command=save_game)
-        file_option.add_cascade(label="Load Game", command=openfile)
-        file_option.add_cascade(label="Save Game")
         file_option.add_cascade(label="Load Game", command=load_game)
         file_option.add_cascade(label="Quit Game", command=quit_game)
 
-
+        #LEVEL STARTS OFF AT MAP 1
         self.map = self.level_list[0]
 
         self.cellwidth = 20
         self.cellheight = 20
         self.score = 0
 
+        #INITIALIZE ALL COMPONENTS
         def init():
             self.delete("all")
             self.score_text = self.create_text(50, 420, fill="white", text="SCORE: " + str(self.score))
@@ -917,6 +936,10 @@ class GameBoard(tk.Canvas):
         ghost_choose_direction3()
         self.bind_all("<KeyPress>", keypressed)
 
+    #MAP UPDATES EVERYTIME PACMAN MOVES
+    #DRAWS PACMAN & ALL GHOSTS AT THEIR NEW LOCATION
+    #PACMAN: self.pacman_newx, self.pacman_newy
+    #GHOST: self.ghost_newx, self.ghost_newy
     def update_map(self):
         try:
 
