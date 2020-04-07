@@ -356,9 +356,7 @@ class GameBoard(tk.Canvas):
         def quit_game():
             print("quit game")
             self.control.quitter()
-
-        def killed():
-            self.control.gameover()
+            self.control.db_close()
 
         def check_lives():
             if self.lives == 0:

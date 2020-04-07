@@ -23,7 +23,6 @@ class SQLModel:
 
     def save_game(self, score, map):
 
-        print(score,map)
         try:
 
             cur = con.cursor()
@@ -77,12 +76,10 @@ class SQLModel:
             index = int(input('Which game would you like to load? Please write index starting from 0.'))
             score = load_list[index][0]
             map = load_list[index][1]
-
             return score, map
         finally:
             cur.close()
             print('Database closed...')
-
-    def filer(self):
-        file = self.filename
-        return file
+    def db_closer(self):
+        cur.close()
+        con.close()

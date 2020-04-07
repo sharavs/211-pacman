@@ -61,17 +61,20 @@ class Application(tk.Tk):
         messagebox.showinfo('Load File', 'loading selected file...')
         #run = self.load()  # load selected file
         print('File opened successfully')
+        print(self.currfile)
 
     def quitter(self):
         quit_pop = messagebox.askquestion('Quit Application', 'Are you sure you want to quit Pac-Man?')
         if quit_pop == 'yes':
-            con.close()
+            model = m.SQLModel(self.currfile)
+            model.db_closer()
             self.destroy()
         else:
             messagebox.showinfo('Return', 'returning user to PacMan...')
 
-    def gameover(self):
-        self.show_screen(self.over_screen)
+    def db_close(self):
+        model = m.SQLModel(self.currfile)
+        model.db_closer()
                  
 if __name__ == "__main__":
     app = Application()
