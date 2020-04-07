@@ -17,6 +17,7 @@ class Application(tk.Tk):
         self.current_screen = None
 
         self.score = self.gameboard.score
+        self.map = self.gameboard.map
 
         model = m.TXTModel('default1.txt')
         self.currfile = model.filename
