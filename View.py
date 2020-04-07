@@ -4,6 +4,7 @@ from tkinter import ttk
 from collections import defaultdict
 from tkinter import messagebox
 from tkinter import filedialog
+from tkinter.ttk import * 
 #import pygame
 import csv
 import os
@@ -12,6 +13,7 @@ import random
 import re
 import time
 import threading
+from PIL import ImageTk, Image
 
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -254,7 +256,6 @@ class GameBoard(tk.Canvas):
             # Start Ghosts @nilabh
             ghost_choose_direction()
 
-
         def openfile():
             print('opening file...')
             self.control.opener()
@@ -263,7 +264,6 @@ class GameBoard(tk.Canvas):
         def quit_game():
             print("quit game")
             self.control.quitter()
-
 
         def killed():
             self.control.gameover()
@@ -767,4 +767,130 @@ class GameBoard(tk.Canvas):
         print(tag)
 
 
+class BaseScreen    (
+    tk.Frame    ):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs,width=500,height=500,bg="black")
+        
+        self.control    = parent
 
+        style_button = Style() 
+        style_button.theme_use('alt')
+        style_button.configure(
+                'TButton'                       ,
+                font = ('calibri', 20, 'bold',) , 
+                borderwidth = 0                 ,
+                background  = 'black'           ,
+                foreground  = 'white'           ,
+            )
+        style_button.map('TButton', 
+            foreground = [('active', '!disabled', 'orange')], 
+            background = [('active', 'black')])
+
+        style_label1 = Style() 
+        style_label1.theme_use('alt')
+        style_label1.configure(
+                'a.TLabel'                        ,
+                font = ('calibri', 50, 'bold',) , 
+                borderwidth = 0                 ,
+                background  = 'black'           ,
+                foreground  = 'orange'          ,
+            )
+
+        style_label2 = Style() 
+        style_label2.theme_use('alt')
+        style_label2.configure(
+                'b.TLabel'                        ,
+                font = ('calibri', 10, 'bold',) , 
+                borderwidth = 0                 ,
+                background  = 'black'           ,
+                foreground  = 'white'           ,
+            )
+
+        self._frame = tk.Frame(self,bg="black")
+        self._frame.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+    def _add_image(self):
+        img = Image.open("pac-man.png")
+        img = img.resize((192, 140),Image.ANTIALIAS)
+        img = ImageTk.PhotoImage(img, master= self._frame)
+
+        self._image = tk.Label(self._frame, image = img, background= "black")
+        self._image.image = img
+        self._image.grid(row=0,column=1)
+
+class StartScreen   (
+    BaseScreen   ):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self._add_image()
+        self._button_new    = Button(self._frame, text= "NEW GAME"    ,style = 'TButton',
+            command = self.control.new_game )
+        self._button_new.grid(row=1,column=1,sticky= 'w')
+        
+        self._button_load   = Button(self._frame, text= "LOAD GAME"   ,style = 'TButton')
+        self._button_load.grid(row=2,column=1,sticky= 'w')
+
+        self._button_help   = Button(self._frame, text= "HELP"        ,style = 'TButton',
+            command = lambda : self.control.show_screen(self.control.help_screen))
+        self._button_help.grid(row=3,column=1,sticky= 'w')
+
+        self._button_quit   = Button(self._frame, text= "QUIT"        ,style = 'TButton',
+            command= self.control.quitter)
+        self._button_quit.grid(row=4,column=1,sticky= 'w')
+
+class HelpScreen(
+    BaseScreen   ):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        
+        self._label1 = Label(self._frame, text= "HELP", style = "a.TLabel")
+        self._label1.grid(row=1,column=1)
+        
+        self._label2 = Label(self._frame, text= "- ARROW KEYS ARE USED TO MOVE PAC-MAN IN THE RELATIVE DIRECTION",
+            style = "b.TLabel")
+        self._label2.grid(row=2,column=1,sticky="w")
+
+        self._label3 = Label(self._frame, text= "- COLLECT ALL THE FOOD (SMALL DOTS) TO WIN THE GAME",
+            style = "b.TLabel")
+        self._label3.grid(row=3,column=1,sticky="w")
+
+        self._label4 = Label(self._frame, text= "- AVOID RUNNING INTO THE GHOSTS",
+            style = "b.TLabel")
+        self._label4.grid(row=4,column=1,sticky="w")
+
+        self._button_quit   = Button(self._frame, text= "MAIN MENU"        ,style = 'TButton',
+            command = lambda : self.control.show_screen(self.control.start_screen))
+        self._button_quit.grid(row=5,column=1)
+
+class OverScreen    (
+    BaseScreen   ):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self._add_image()
+
+        score   = kwargs.get('score',0)
+
+        self._label1 = Label(self._frame, text= "GAME OVER", style = "a.TLabel")
+        self._label1.grid(row=1,column=1)
+        
+        self._label2 = Label(self._frame, text= f"YOUR SCORE : {score}",
+            style = "a.TLabel")
+        self._label2.grid(row=2,column=1)
+
+        self._button_quit   = Button(self._frame, text= "MAIN MENU"        ,style = 'TButton',
+            command = lambda : self.control.show_screen(self.control.start_screen))
+        self._button_quit.grid(row=3,column=1)
+
+class LoadingScreen    (
+    BaseScreen   ):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self._add_image()
+
+        score   = kwargs.get('score',0)
+
+        self._label1 = Label(self._frame, text= "LOADING...", style = "a.TLabel")
+        self._label1.grid(row=1,column=1)
