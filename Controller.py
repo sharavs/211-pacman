@@ -25,12 +25,14 @@ class Application(tk.Tk):
 
     def new_game    (
         self    ):
+    # NEW GAME MENU OPTION TRIGGER
         self.gameboard = v.GameBoard(self)
         self.show_screen(self.gameboard)
 
     def show_screen (
         self    ,
         screen  ):
+    # SCREEN PLACEMENT
         if self.current_screen  == screen   :
             return
         if self.current_screen != None  :
@@ -66,16 +68,21 @@ class Application(tk.Tk):
         print('File loaded successfully')
 
     def quitter(self):
-        quit_pop = messagebox.askquestion('Quit Application', 'Are you sure you want to quit Pac-Man?')
+    # QUIT MENU OPTION TRIGGER
+
+        quit_pop = messagebox.askquestion('Quit Pac-Man', 'Are you sure you want to quit Pac-Man?')
         if quit_pop == 'yes':
             self.destroy()
         else:
-            messagebox.showinfo('Return', 'returning user to PacMan...')
-        self.gameboard = v.GameBoard(self)
-        self.gameboard.grid()
+       #     messagebox.showinfo('Return', 'Returning to Pac-Man...')
+            pass
+       # self.gameboard = v.GameBoard(self)
+       # self.gameboard.grid()
 
         #self.game = v.gameboard(self)
+
     def gameover(self):
+    # GAME OVER SCREEN TRIGGER
         self.show_screen(self.over_screen)
                  
 if __name__ == "__main__":
