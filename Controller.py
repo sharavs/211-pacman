@@ -67,6 +67,7 @@ class Application(tk.Tk):
     def quitter(self):
         quit_pop = messagebox.askquestion('Quit Application', 'Are you sure you want to quit Pac-Man?')
         if quit_pop == 'yes':
+            con.close()
             self.destroy()
         else:
             messagebox.showinfo('Return', 'returning user to PacMan...')
