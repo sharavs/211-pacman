@@ -4,6 +4,9 @@ from datetime import datetime
 import pickle
 import os.path
 import time
+import sqlite3
+
+con = sqlite3.connect('pacman.db')
 
 class TXTModel:
 
@@ -14,35 +17,80 @@ class TXTModel:
     def __init__(self, filename):
         self.filename = filename
         self.filecontent = []
+        self.game_list = []
         # self.saved_data = saved_data
         self.tstring = time.strftime("%Y%m%d-%H%M%S")
 
     def save_game(self, score, map):
-        newfile = not os.path.exists('game'+self.tstring)  # check if it's a new file
-        if newfile:
-            f = open(('game'+self.tstring+'.txt'), 'w')
-            f.write('[{}]'.format(str(score)) + '\n')
-            f.write(str(map) + '\n')
-        else:
-            f = open((self.filename, 'w'))
-            f.write('[{}]'.format(str(score)) + '\n')
-            f.write(str(map) + '\n')
-            f.close()
-        f.close()
+
+        print(score,map)
+        try:
+
+            cur = con.cursor()
+            print('Connected Successfully')
+            cur.execute("CREATE TABLE game(score INT, map STR)")
+            cur.execute("INSERT INTO game (score , map) VALUES (?,?)",
+                        (score, str(map)))
+            print(score,map)
+
+        except sqlite3.Error as error:
+            print('SQLite Error: ', error)
+            cur = con.cursor()
+            cur.execute("INSERT INTO game (score , map) VALUES (?,?)",
+                        (score, str(map)))
+
+            cur.execute("SELECT * FROM game")
+            rows = cur.fetchall()
+            for row in rows:
+                self.game_list.append((row[0],row[1]))
+            print('Game List:')
+            for i in self.game_list:
+                print(i)
+            print(self.game_list)
+
+        finally:
+            #cur.close()
+            #con.close()
+            print('Database closed...')
 
     def load_game(self):
-        f = open(self.filename, 'r')
-        records = []
+        load_list =[]
+        try:
 
-        x = 0
-        for x in range(2):
-            item = f.readline()
-            self.filecontent.append(item)
-            x += 1
-        for i in self.filecontent:
-            records.append(i[:-1])
-        f.close()
-        return records
+            cur = con.cursor()
+            print('Connected Successfully')
+            cur.execute("CREATE TABLE game(score INT, map STR)")
+
+            rows = cur.fetchall()
+            for row in rows:
+                load_list.append((row[0],row[1]))
+            for i in load_list:
+                print(i)
+            print('still here')
+
+
+
+        except sqlite3.Error as error:
+            print('SQLite Error: ', error)
+            cur = con.cursor()
+
+            cur.execute("SELECT * FROM game")
+            rows = cur.fetchall()
+            for row in rows:
+                load_list.append((row[0], row[1]))
+            for i in load_list:
+                print(i)
+            index = int(input('Which game would you like to load? Please write index starting from 0.'))
+            score = load_list[index][0]
+            map = load_list[index][1]
+            print(type(map), map)
+            return score, map
+
+
+        finally:
+                # cur.close()
+                # con.close()
+                print('Database closed...')
 
     def filer(self):
         file = self.filename

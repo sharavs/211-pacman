@@ -302,29 +302,21 @@ class GameBoard(tk.Canvas):
             print("save game")
             self.control.save()
 
-        def load_game(*args):
-            print("load game")
+        def load_game():
+            common = 0
+            #return self.control.load()
 
-            self.data = self.control.load()  # data retrieves its values from self.control (controller parent)
-            wordlist = self.data
-
-            self.score = int(wordlist[0][1:-1])
-            self.map = []
-            final_list =[]
+            l_score, l_map = self.control.load()
+            #filter1 = list(map)
+            filter1 = l_map
             new_list = []
-            i = wordlist[1][1:-1]
-            for var in i:
-                for col in var:
-                    if col == ' ' or col == '[' or col == ']' or col == ',':
-                        #print('char')
-                        pass
-                    elif col == '1' or '2' or '0':
-                        #print(col)
-                        new_list.append(int(col))
-                    else:
-                        pass
-            print(type(new_list), new_list)
-            # Append to final_list
+            final_list = []
+            for var in filter1:
+                if var == ' ' or var == '[' or var == ']' or var == ',':
+                    pass
+                else:
+                    new_list.append(int(var))
+            # Set final_list
             final_list.append(new_list[0:21])
             final_list.append(new_list[21:42])
             final_list.append(new_list[42:63])
@@ -347,33 +339,20 @@ class GameBoard(tk.Canvas):
             final_list.append(new_list[378:399])
             final_list.append(new_list[399:420])
 
-            print('final:',final_list) # remove after
-            self.map = list(final_list)
+            print('final:', final_list)  # remove after
+            self.score = l_score
+            self.map = final_list
 
-            print('____________________________') # remove
+            self.pacman.x = 1
+            self.pacman.y = 1
             self.update_map()
-            # Add pacman and ghost, tell ghost to choose direction
-            self.pacman = Player(self, 1, 1, 20)
-            self.pacmanplayer = self.create_oval(self.pacman.x * self.cellwidth, self.pacman.y * self.cellwidth,
-                                                 (self.pacman.x * self.cellwidth) + self.cellwidth,
-                                                 (self.pacman.y * self.cellwidth) + self.cellheight, fill="yellow",
-                                                 tags="pacman")
-
-            self.ghost = Ghosts(self, 10, 6, 20)
-            self.ghost1 = self.create_oval(self.ghost.x * self.cellwidth, self.ghost.y * self.cellwidth,
-                                           (self.ghost.x * self.cellwidth) + self.cellwidth,
-                                           (self.ghost.y * self.cellwidth) + self.cellheight, fill="magenta",
-                                           tags="ghost")
-            # Start Ghosts @nilabh
-            ghost_choose_direction()
 
         def openfile():
             print('opening file...')
-            self.control.opener()
-            load_game()
+            #self.control.opener()
+            #load_game()
 
-        def load_game():
-            print("load game")
+
 
 
         def quit_game():
@@ -837,9 +816,8 @@ class GameBoard(tk.Canvas):
         file_option = Menu(mainmenu, tearoff=True)
         mainmenu.add_cascade(label="File", menu=file_option)
 
+
         file_option.add_cascade(label="Save Game", command=save_game)
-        file_option.add_cascade(label="Load Game", command=openfile)
-        file_option.add_cascade(label="Save Game")
         file_option.add_cascade(label="Load Game", command=load_game)
         file_option.add_cascade(label="Quit Game", command=quit_game)
 
