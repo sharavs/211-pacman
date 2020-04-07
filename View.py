@@ -13,6 +13,149 @@ import re
 import time
 import threading
 
+BLACK = (0,0,0)
+WHITE = (255,255,255)
+BLUE = (12,27,237)
+YELLOW = (250,225,0)
+
+WIDTH = 500
+HEIGHT = 500
+
+'''
+class Character(pygame.sprite.Sprite):
+    #sprite for pacman/ghosts
+    def __init__(self,x,y,ppx,ppy,speed):
+        pygame.sprite.Sprite.__init__(self)
+        self.x = x
+        self.y = y
+        self.ppx = self.x * 20
+        self.ppy = self.y * 20
+        self.speed = speed
+        #self.color = color
+        #self.isPacman = isPacman
+
+        self.image = pygame.Surface((20,20))
+        self.image.fill(YELLOW)
+        self.rect = self.image.get_rect(x=self.ppx,y=self.ppy)
+
+    def update_left(self):
+        self.rect.x -= self.speed
+
+    def update_right(self):
+        self.rect.x += self.speed
+
+    def update_up(self):
+        self.rect.y -= self.speed
+
+    def update_down(self):
+        self.rect.y += self.speed
+
+
+class gameboard():
+    def __init__(self, parent, *args, **kwargs):
+
+        #initializing pygame
+        pygame.display.init()
+        clock = pygame.time.Clock()
+        all_sprites = pygame.sprite.Group()
+        self.pacman = Character(1,1,20,20,5)
+        print(self.pacman.ppx)
+        all_sprites.add(self.pacman)
+
+        # sets up window size
+        WINDOW_SIZE = [500,500]
+        screen = pygame.display.set_mode(WINDOW_SIZE)
+
+
+
+        self.cellwidth = 18
+        self.cellheight = 18
+        MARGIN = 2
+        self.map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                    [1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+                    [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1],
+                    [1, 2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 2, 1],
+                    [1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+                    [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+                    [1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 1],
+                    [1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 1],
+                    [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+                    [1, 2, 2, 2, 1, 1, 1, 2, 1, 0, 0, 0, 1, 2, 1, 1, 1, 2, 2, 2, 1],
+                    [1, 2, 1, 1, 1, 2, 2, 2, 1, 0, 0, 0, 1, 2, 2, 2, 1, 1, 1, 2, 1],
+                    [1, 2, 2, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 2, 2, 1],
+                    [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+                    [1, 2, 1, 1, 1, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 1, 1, 1, 2, 1],
+                    [1, 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 1],
+                    [1, 2, 2, 2, 2, 2, 2, 1, 2, 1, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 1],
+                    [1, 2, 1, 1, 1, 1, 2, 2, 2, 1, 2, 1, 2, 2, 2, 1, 1, 1, 1, 2, 1],
+                    [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1],
+                    [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+
+        #mainloop runs until user quits
+        running = True
+        while running:
+
+            #did the user click the close button?
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+
+            #update characters
+            all_sprites.update()
+
+            #draw/render
+            screen.fill((0,0,0))
+
+            # displays the level map
+            for row in range(20):
+                for column in range(21):
+                    if self.map[row][column] == 0:
+                        pygame.draw.rect(screen, BLACK, [(MARGIN + self.cellwidth) * column + MARGIN,
+                                                         (MARGIN + self.cellheight) * row + MARGIN, self.cellwidth,
+                                                         self.cellheight])
+                    elif self.map[row][column] == 1:
+                        # print("ONE")
+                        pygame.draw.rect(screen, BLUE, [(MARGIN + self.cellwidth) * column + MARGIN,
+                                                        (MARGIN + self.cellheight) * row + MARGIN, self.cellwidth,
+                                                        self.cellheight])
+                    else:
+                        # print("TWO")
+                        pygame.draw.rect(screen, WHITE,
+                                         [(MARGIN + self.cellwidth) * column + 8, (MARGIN + self.cellheight) * row + 8,
+                                          3, 3])
+
+
+            all_sprites.draw(screen)
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_LEFT]:
+                self.pacman.update_left()
+                #print(self.map[self.pacman.ppx][self.pacman.ppy])
+            if keys[pygame.K_RIGHT]:
+                self.pacman.update_right()
+                #print(self.map[self.pacman.ppx][self.pacman.ppy])
+            if keys[pygame.K_UP]:
+                self.pacman.update_up()
+                #print(self.map[self.pacman.ppx][self.pacman.ppy])
+            if keys[pygame.K_DOWN]:
+                self.pacman.update_down()
+                #print(self.map[self.pacman.ppx][self.pacman.ppy])
+
+
+            #if self.pacman and self.map[self.pacman.x][self.pacman.y] == 2:
+             #   print("food")
+
+            pygame.display.update()
+
+
+
+
+
+            pygame.display.flip()
+
+    pygame.quit()
+'''
+
 
 class Player():
     def __init__(self,parent,x,y,speed):
@@ -22,40 +165,33 @@ class Player():
         self.ppy = y*20
         self.speed = speed
 
-class Ghosts(tk.Canvas):
-    def __init__(self, x, y, speed):
+class Ghosts():
+    def __init__(self,parent,x,y,speed):
         self.x = x
         self.y = y
         self.ppx = x * 20
         self.ppy = x * 20
         self.speed = speed
 
+
 class GameBoard(tk.Canvas):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs,width=500,height=500,bg="black")
         self.current = (0,0)
-        self.score = 0
+
         self.control = parent
-        parent.title("Pacman HD")
         self.direction = None
         self.previous = None
-        self.previous2 = None
-        self.pacman_newx = 1
-        self.pacman_newy = 1
         self.direction_list = ['Up', 'Down', 'Right', 'Left']
-
-        self.lives = 3
-
+<<<<<<< HEAD
         self.filecontent = []
 
         def save_game():
             print("save game")
             self.control.save()
 
-
         def load_game(*args):
             print("load game")
-
 
             self.data = self.control.load()  # data retrieves its values from self.control (controller parent)
             wordlist = self.data
@@ -124,15 +260,82 @@ class GameBoard(tk.Canvas):
             print('opening file...')
             self.control.opener()
             load_game()
+=======
+        self.lives = 3
 
+        def load_game():
+            print("load game")
+
+>>>>>>> parent of bbfbc1e... Merge branch 'master' into nilabh_create_characters_branch
 
         def quit_game():
             print("quit game")
-            self.control.quitter()
 
 
         def killed():
             self.control.gameover()
+
+        '''
+        def move1():
+            coords1 = self.coords(self.ghostplayer)
+            y = int(coords1[0] / 20)
+            x = int(coords1[1] / 20)
+            next_right = (x,y+1)
+            next_left = (x,y-1)
+            next_down = (x+1,y)
+            next_up = (x-1, y)
+            self.current = (x, y)
+            if self.current < (18,18):
+                if (self.map[next_right[0]][next_right[1]] != 1) and (self.map[next_left[0]][next_left[1]] != 1):
+                    self.move(self.ghostplayer, +self.ghost.speed, 0)
+                    #print(self.current)
+                elif (self.map[next_right[0]][next_right[1]] == 1):
+                    self.move(self.ghostplayer, 0, +self.ghost.speed)
+                    #print(self.current)
+                elif (self.map[next_right[0]][next_right[1]] == 1) and (self.map[next_down[0]][next_down[1]] == 1):
+                    self.move(self.ghostplayer, 0, +15)
+                    #print(self.current)
+                elif self.current==(19, 19):
+                    #print('found')
+                    self.move(self.ghostplayer, -self.ghost.speed, 0)
+                #elif (self.map[next_left[0]][next_left[1]] != 1):
+                #    self.move(self.ghostplayer, 0, -self.ghost.speed)
+                else:
+                    #print('else')
+                    if (self.map[next_left[0]][next_left[1]] != 1):
+                        self.move(self.ghostplayer, 0, -self.ghost.speed)
+                    else:
+                        self.move(self.ghostplayer, 0, +self.ghost.speed)
+
+            else:
+                #self.move(self.ghostplayer, -self.ghost.speed*17, -self.ghost.speed*6)
+                pass
+            self.after(100,move1)
+            
+            
+            #self.direction = random.choice(('left','right','up','down','left','right','up','down'))
+            current = (x, y)
+
+            if self.direction=='down' and (self.map[next_down[0]][next_down[1]] != 1):
+                self.move(self.ghostplayer, 0, +self.ghost.speed)
+                print('downward')
+            elif self.direction=='right' and (self.map[next_right[0]][next_right[1]] != 1):
+                self.move(self.ghostplayer, +self.ghost.speed, 0)
+                print('rightward')
+            elif self.direction == 'up' and (self.map[next_up[0]][next_up[1]] != 1):
+                self.move(self.ghostplayer, 0, +self.ghost.speed)
+                print('upward')
+            elif self.direction=='left' and (self.map[next_left[0]][next_left[1]] != 1):
+                self.move(self.ghostplayer, +self.ghost.speed, 0)
+                print('leftward')
+
+            else:
+                self.direction = random.choice(('left','right','up','down'))
+                print('passing..', self.direction)
+
+            self.after(200, move1)
+            #self.update_map()
+        '''
 
 
         def moveright():
@@ -218,7 +421,7 @@ class GameBoard(tk.Canvas):
 
 
         def keypressed(event):
-
+            print(event.keysym)
             self.direction = event.keysym
             if self.direction == "Right":
                 moveright()
@@ -229,11 +432,8 @@ class GameBoard(tk.Canvas):
             else:
                 movedown()
 
-        def check_lives():
-            if self.lives == 0:
-                self.control.quit()
-            else:
-                pass
+        def keyreleased(event):
+            print(event.keysym, "released")
 
         def ghostmovedown():
             coords = self.coords(self.ghost1)
@@ -245,12 +445,9 @@ class GameBoard(tk.Canvas):
                 self.move(self.ghost1, 0, +self.ghost.speed)
                 self.ghost_newx = next_down[1]
                 self.ghost_newy = next_down[0]
-                if (self.pacman_newx*self.cellwidth == self.ghost_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost_newy*self.cellheight):
-                    self.lives -= 1
-                    check_lives()
-                    init()
                 self.after(100, ghostmovedown)
                 self.update()
+                #self.update_idletasks()
             else:
                 self.previous = self.ghost_direction
                 ghost_choose_direction()
@@ -265,12 +462,9 @@ class GameBoard(tk.Canvas):
                 self.move(self.ghost1, 0,-self.ghost.speed)
                 self.ghost_newx = next_up[1]
                 self.ghost_newy = next_up[0]
-                if (self.pacman_newx*self.cellwidth == self.ghost_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost_newy*self.cellheight):
-                    self.lives -= 1
-                    check_lives()
-                    init()
                 self.after(100, ghostmoveup)
                 self.update()
+                #self.update_idletasks()
             else:
                 self.previous = self.ghost_direction
                 ghost_choose_direction()
@@ -285,12 +479,9 @@ class GameBoard(tk.Canvas):
                 self.move(self.ghost1, +self.ghost.speed, 0)
                 self.ghost_newx = next_right[1]
                 self.ghost_newy = next_right[0]
-                if (self.pacman_newx * self.cellwidth == self.ghost_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost_newy*self.cellheight):
-                    self.lives -= 1
-                    check_lives()
-                    init()
                 self.after(100, ghostmoveright)
                 self.update()
+                #self.update_idletasks()
             else:
                 self.previous = self.ghost_direction
                 ghost_choose_direction()
@@ -304,12 +495,9 @@ class GameBoard(tk.Canvas):
                 self.move(self.ghost1, -self.ghost.speed, 0)
                 self.ghost_newx = next_left[1]
                 self.ghost_newy = next_left[0]
-                if (self.pacman_newx*self.cellwidth == self.ghost_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost_newy*self.cellheight):
-                    self.lives -= 1
-                    check_lives()
-                    init()
                 self.after(100, ghostmoveleft)
                 self.update()
+                #self.update_idletasks()
             else:
                 self.previous = self.ghost_direction
                 ghost_choose_direction()
@@ -331,110 +519,142 @@ class GameBoard(tk.Canvas):
                 else:
                     ghostmoveleft()
 
-        def ghost_choose_direction2():
+            #print(self.ghost_direction)
 
-            self.ghost_direction2 = random.choice(self.direction_list)
-            if self.ghost_direction2 == self.previous2:
-                self.after(100, ghost_choose_direction2)
-            else:
-                if self.ghost_direction2 == "Up":
-                    ghostmoveup2()
-                elif self.ghost_direction2 == "Down":
-                    ghostmovedown2()
-                elif self.ghost_direction2 == "Right":
-                    ghostmoveright2()
-                else:
-                    ghostmoveleft2()
 
-        def ghostmovedown2():
-            coords = self.coords(self.ghost2)
+
+        def move_ghost1():
+            coords = self.coords(self.ghost1)
+            print(coords)
             y = int(coords[0] / 20)
             x = int(coords[1] / 20)
-            next_down = (x + 1, y)
-            if (self.map[next_down[0]][next_down[1]] != 1):
-                self.move(self.ghost2, 0, +self.ghost.speed)
-                self.ghost2_newx = next_down[1]
-                self.ghost2_newy = next_down[0]
-                if (self.pacman_newx*self.cellwidth == self.ghost2_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost2_newy*self.cellheight):
-                    self.lives -= 1
-                    check_lives()
-                    init()
-                self.after(100, ghostmovedown2)
-                self.update()
-            else:
-                self.previous2 = self.ghost_direction2
-                ghost_choose_direction2()
 
-
-        def ghostmoveup2():
-            coords = self.coords(self.ghost2)
-            y = int(coords[0] / 20)
-            x = int(coords[1] / 20)
             next_up = (x - 1, y)
-            if (self.map[next_up[0]][next_up[1]] != 1):
-                self.move(self.ghost2, 0,-self.ghost.speed)
-                self.ghost2_newx = next_up[1]
-                self.ghost2_newy = next_up[0]
-                if (self.pacman_newx*self.cellwidth == self.ghost2_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost2_newy*self.cellheight):
-                    self.lives -= 1
-                    check_lives()
-                    init()
-                self.after(100, ghostmoveup2)
-                self.update()
+            
+            self.direction_list = ['Up','Down','Right','Left']
+            self.ghost_direction = 'Up'
+            if self.ghost_direction == "Up":
+                if (self.map[next_up[0]][next_up[1]] != 1):
+                    self.move(self.ghost1, 0, -self.ghost.speed)
+                    self.ghost_newx = next_up[1]
+                    self.ghost_newy = next_up[0]
+
+                else:
+                    pass
+                #self.after(100, move_ghost)
             else:
-                self.previous2 = self.ghost_direction2
-                ghost_choose_direction2()
+                pass
+            self.update_map()
 
 
-        def ghostmoveright2():
-            coords = self.coords(self.ghost2)
+            print(self.ghost_direction)
+
+
+        '''
+        def move(event):
+            key_pressed = event.keysym
+            print(key_pressed)
+            coords = self.coords(self.pacmanplayer)
             y = int(coords[0] / 20)
             x = int(coords[1] / 20)
-            next_right = (x, y + 1)
-            if (self.map[next_right[0]][next_right[1]] != 1):
-                self.move(self.ghost2, +self.ghost.speed, 0)
-                self.ghost2_newx = next_right[1]
-                self.ghost2_newy = next_right[0]
-                if (self.pacman_newx*self.cellwidth == self.ghost2_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost2_newy*self.cellheight):
-                    self.lives -= 1
-                    check_lives()
-                    init()
-                self.after(100, ghostmoveright2)
-                self.update()
-            else:
-                self.previous2 = self.ghost_direction2
-                ghost_choose_direction2()
+            #print((x, y))
 
-        def ghostmoveleft2():
-            coords = self.coords(self.ghost2)
-            y = int(coords[0] / 20)
-            x = int(coords[1] / 20)
-            next_left = (x, y - 1)
-            if (self.map[next_left[0]][next_left[1]] != 1):
-                self.move(self.ghost2, -self.ghost.speed, 0)
-                self.ghost2_newx = next_left[1]
-                self.ghost2_newy = next_left[0]
-                if (self.pacman_newx*self.cellwidth == self.ghost2_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost2_newy*self.cellheight):
-                    self.lives -= 1
-                    check_lives()
-                    init()
-                self.after(100, ghostmoveleft2)
-                self.update()
-            else:
-                self.previous2 = self.ghost_direction2
-                ghost_choose_direction2()
+            next_right = (x,y+1)
+            next_left = (x,y-1)
+            next_down = (x+1,y)
+            next_up = (x-1, y)
+            current = (x, y)
+            if current == self.current:
+                print("Game Over")
+                killed()
 
+            # Player
+            if event.keysym == 'Up':
+                #while (self.map[next_up[0]][next_up[1]] != 1):
+                if (self.map[next_up[0]][next_up[1]] != 1):
+                    self.move(self.pacmanplayer,0,-self.pacman.speed)
+                    self.pacman_newx = next_up[1]
+                    self.pacman_newy = next_up[0]
+                    if (self.map[next_up[0]][next_up[1]] == 2):
+                        self.score += 1
+                        self.map[next_up[0]][next_up[1]] = 0
+                        self.update_map()
+                    else:
+                        pass
+
+                    coords = self.coords(self.pacmanplayer)
+                    y = int(coords[0] / 20)
+                    x = int(coords[1] / 20)
+                    next_up = (x - 1, y)
+
+            if event.keysym == 'Down':
+                #while (self.map[next_down[0]][next_down[1]] != 1):
+                if (self.map[next_down[0]][next_down[1]] != 1):
+                    self.move(self.pacmanplayer,0,self.pacman.speed)
+                    self.pacman_newx = next_down[1]
+                    self.pacman_newy = next_down[0]
+                    if (self.map[next_down[0]][next_down[1]] == 2):
+                        self.score += 1
+                        self.map[next_down[0]][next_down[1]] = 0
+                        self.update_map()
+                    else:
+                        pass
+                    coords = self.coords(self.pacmanplayer)
+                    y = int(coords[0] / 20)
+                    x = int(coords[1] / 20)
+                    next_down = (x + 1, y)
+
+            if event.keysym == 'Left':
+                #while(self.map[next_left[0]][next_left[1]] != 1):
+                if(self.map[next_left[0]][next_left[1]] != 1):
+                    self.move(self.pacmanplayer, -self.pacman.speed, 0)
+                    self.pacman_newx = next_left[1]
+                    self.pacman_newy = next_left[0]
+                    if (self.map[next_left[0]][next_left[1]] == 2):
+                        self.score += 1
+                        self.map[next_left[0]][next_left[1]] = 0
+                        self.update_map()
+                    else:
+                        pass
+                    coords = self.coords(self.pacmanplayer)
+                    y = int(coords[0] / 20)
+                    x = int(coords[1] / 20)
+                    next_left = (x, y - 1)
+
+            if event.keysym == 'Right':
+                #while(self.map[next_right[0]][next_right[1]] != 1):
+                if(self.map[next_right[0]][next_right[1]] != 1):
+                    self.move(self.pacmanplayer, +self.pacman.speed, 0)
+                    time.sleep(0.01)
+                    self.pacman_newx = next_right[1]
+                    self.pacman_newy = next_right[0]
+                    if (self.map[next_right[0]][next_right[1]] == 2):
+                        self.score += 1
+                        self.map[next_right[0]][next_right[1]] = 0
+                        self.update_map()
+                    else:
+                        pass
+                    coords = self.coords(self.pacmanplayer)
+                    y = int(coords[0] / 20)
+                    x = int(coords[1] / 20)
+                    next_right = (x, y + 1)
+            self.after(50,self.move)
+
+            print(self.score)
+            '''
 
 
         mainmenu = Menu(self)
         parent.config(menu=mainmenu)
         file_option = Menu(mainmenu, tearoff=True)
         mainmenu.add_cascade(label="File", menu=file_option)
-        file_option.add_cascade(label="Save Game")
-        file_option.add_cascade(label="Load Game", command=load_game)
-
+<<<<<<< HEAD
         file_option.add_cascade(label="Save Game", command=save_game)
         file_option.add_cascade(label="Load Game", command=openfile)
+=======
+        file_option.add_cascade(label="Save Game")
+        file_option.add_cascade(label="Load Game", command=load_game)
+>>>>>>> parent of bbfbc1e... Merge branch 'master' into nilabh_create_characters_branch
         file_option.add_cascade(label="Quit Game", command=quit_game)
 
         self.map = [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -464,7 +684,52 @@ class GameBoard(tk.Canvas):
 
 
 
-        def init():
+        for row in range(20):
+            for column in range(21):
+                x1 = column * self.cellwidth
+                y1 = row * self.cellheight
+                x2 = x1 + self.cellwidth
+                y2 = y1 + self.cellheight
+
+                if self.map[row][column] == 1:
+                    wall = self.create_rectangle(x1, y1, x2, y2, fill="blue", tags=str(self.map[row][column]))
+                    self.tag_bind(wall, '<Button-1>', lambda event, tag=self.itemcget(wall, "tags"):
+                    self.clicked(tag))
+
+                elif self.map[row][column] == 0:
+                    open_space = self.create_rectangle(x1, y1, x2, y2, fill="black",
+                                                       tags=str(self.map[row][column]))
+                    self.tag_bind(open_space, '<Button-1>', lambda event, tag=self.itemcget(open_space, "tags"):
+                    self.clicked(tag))
+                else:
+                    food = self.create_rectangle(x1 + 8, y1 + 8, x2 - 8, y2 - 8, fill="white",
+                                                 tags=str(self.map[row][column]))
+                    self.tag_bind(food, '<Button-1>', lambda event, tag=self.itemcget(food, "tags"):
+                    self.clicked(tag))
+
+        self.pacman = Player(self,1,1,20)
+        self.pacmanplayer = self.create_oval(self.pacman.x*self.cellwidth, self.pacman.y*self.cellwidth, (self.pacman.x*self.cellwidth) + self.cellwidth, (self.pacman.y*self.cellwidth) + self.cellheight, fill="yellow", tags="pacman")
+
+
+
+        self.ghost = Ghosts(self, 10, 10, 20)
+        self.ghost1 = self.create_oval(self.ghost.x * self.cellwidth, self.ghost.y * self.cellwidth,
+                                                  (self.ghost.x * self.cellwidth) + self.cellwidth,
+                                                  (self.ghost.y * self.cellwidth) + self.cellheight, fill="magenta",
+                                                  tags="ghost")
+
+        ghost_choose_direction()
+        self.bind_all("<KeyPress>", keypressed)
+
+
+        self.score_text = self.create_text(50,420,fill="white",text="SCORE: "+str(self.score))
+
+    def update_map(self):
+        try:
+
+            self.delete("all")
+            self.score_text = self.create_text(50, 420, fill="white", text="SCORE: "+str(self.score))
+
             for row in range(20):
                 for column in range(21):
                     x1 = column * self.cellwidth
@@ -474,62 +739,6 @@ class GameBoard(tk.Canvas):
 
                     if self.map[row][column] == 1:
                         wall = self.create_rectangle(x1, y1, x2, y2, fill="blue", tags=str(self.map[row][column]))
-                        self.tag_bind(wall, '<Button-1>', lambda event, tag=self.itemcget(wall, "tags"):
-                        self.clicked(tag))
-
-                    elif self.map[row][column] == 0:
-                        open_space = self.create_rectangle(x1, y1, x2, y2, fill="black",tags=str(self.map[row][column]))
-                        self.tag_bind(open_space, '<Button-1>', lambda event, tag=self.itemcget(open_space, "tags"):
-                        self.clicked(tag))
-                    else:
-                        food = self.create_rectangle(x1 + 8, y1 + 8, x2 - 8, y2 - 8, fill="white",tags=str(self.map[row][column]))
-                        self.tag_bind(food, '<Button-1>', lambda event, tag=self.itemcget(food, "tags"):
-                        self.clicked(tag))
-
-            self.pacman = Player(self,1,1,20)
-            self.pacmanplayer = self.create_oval(self.pacman.x*self.cellwidth, self.pacman.y*self.cellwidth, (self.pacman.x*self.cellwidth) + self.cellwidth, (self.pacman.y*self.cellwidth) + self.cellheight, fill="yellow", tags="pacman")
-
-
-
-            self.ghost = Ghosts(10, 10, 20)
-            self.ghost1 = self.create_oval(self.ghost.x * self.cellwidth, self.ghost.y * self.cellwidth,
-                                                  (self.ghost.x * self.cellwidth) + self.cellwidth,
-                                                  (self.ghost.y * self.cellwidth) + self.cellheight, fill="magenta",
-                                                  tags="ghost")
-
-            self.ghost_two = Ghosts(9, 9, 20)
-            self.ghost2 = self.create_oval(self.ghost_two.x * self.cellwidth, self.ghost_two.y * self.cellwidth,
-                                       (self.ghost_two.x * self.cellwidth) + self.cellwidth,
-                                       (self.ghost_two.y * self.cellwidth) + self.cellheight, fill="orange",
-                                       tags="ghost")
-
-
-        init()
-        ghost_choose_direction()
-        ghost_choose_direction2()
-        self.bind_all("<KeyPress>", keypressed)
-
-
-        self.score_text = self.create_text(50,420,fill="white",text="SCORE: "+str(self.score))
-        self.lives_text = self.create_text(380,420,fill="white",text="LIVES: "+str(self.lives))
-
-    def update_map(self):
-        try:
-
-            self.delete("all")
-            self.score_text = self.create_text(50, 420, fill="white", text="SCORE: "+str(self.score))
-            self.lives_text = self.create_text(380, 420, fill="white", text="LIVES: " + str(self.lives))
-
-
-            for row in range(20):
-                for column in range(21):
-                    x1 = column * self.cellwidth
-                    y1 = row * self.cellheight
-                    x2 = x1 + self.cellwidth
-                    y2 = y1 + self.cellheight
-
-                    if self.map[row][column] == 1:
-                        wall = self.create_rectangle(x1, y1, x2, y2, fill="navy", tags=str(self.map[row][column]))
                         self.tag_bind(wall, '<Button-1>', lambda event, tag=self.itemcget(wall, "tags"):
                         self.clicked(tag))
 
@@ -555,13 +764,6 @@ class GameBoard(tk.Canvas):
                                                       fill="magenta",
                                                       tags="ghost")
 
-            self.ghost2 = self.create_oval(self.ghost2_newx * self.cellwidth,
-                                           self.ghost2_newy * self.cellwidth,
-                                           (self.ghost2_newx * self.cellwidth) + self.cellwidth,
-                                           (self.ghost2_newy * self.cellwidth) + self.cellheight,
-                                           fill="orange",
-                                           tags="ghost")
-
 
             #move_ghost()
             #self.bind('<Right>', move_right)
@@ -573,15 +775,16 @@ class GameBoard(tk.Canvas):
         except Exception as e:
             pass
 
+<<<<<<< HEAD
+    def clicked(self,tag):
+        print(tag)
 
+
+=======
     def save_game(self):
         print("save game")
 
     def clicked(self,tag):
         print("clicked")
-
-    def clicked(self,tag):
-        print(tag)
-
-
+>>>>>>> parent of bbfbc1e... Merge branch 'master' into nilabh_create_characters_branch
 
