@@ -127,3 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.DS_Store
+.idea/workspace.xml
+.DS_Store
+.DS_Store
+.DS_Store
