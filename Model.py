@@ -46,17 +46,14 @@ class SQLModel:
             print('Game List:')
             for i in self.game_list:
                 print(i)
-            print(self.game_list)
 
         finally:
-            #cur.close()
-            #con.close()
+            cur.close()
             print('Database closed...')
 
     def load_game(self):
         load_list =[]
         try:
-
             cur = con.cursor()
             print('Connected Successfully')
             cur.execute("CREATE TABLE game(score INT, map STR)")
@@ -67,9 +64,6 @@ class SQLModel:
             for i in load_list:
                 print(i)
             print('still here')
-
-
-
         except sqlite3.Error as error:
             print('SQLite Error: ', error)
             cur = con.cursor()
@@ -83,14 +77,11 @@ class SQLModel:
             index = int(input('Which game would you like to load? Please write index starting from 0.'))
             score = load_list[index][0]
             map = load_list[index][1]
-            print(type(map), map)
+
             return score, map
-
-
         finally:
-                # cur.close()
-                # con.close()
-                print('Database closed...')
+            cur.close()
+            print('Database closed...')
 
     def filer(self):
         file = self.filename

@@ -350,6 +350,7 @@ class GameBoard(tk.Canvas):
 
         def openfile():
             print('opening file...')
+            self.control.opener()
 
 
         def quit_game():
@@ -814,6 +815,7 @@ class GameBoard(tk.Canvas):
         file_option = Menu(mainmenu, tearoff=True)
         mainmenu.add_cascade(label="File", menu=file_option)
 
+        file_option.add_cascade(label="Select Database", command=openfile)
         file_option.add_cascade(label="Save Game", command=save_game)
         file_option.add_cascade(label="Load Game", command=load_game)
         file_option.add_cascade(label="Quit Game", command=quit_game)

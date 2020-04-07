@@ -51,18 +51,16 @@ class Application(tk.Tk):
 
     def opener(self):
         model = m.SQLModel(self.currfile)
-        while self == 'demo.txt':  # If self still default file break askopenfilename
-            break
-        else:
+        while self.currfile:  # If self still default file break askopenfilename
             self.file_in = filedialog.askopenfilename(initialdir='C:\Documents\Github\211-pacman',
-                                                      filetypes=[('File', '*.txt')],
+                                                      filetypes=[('File', '*.db')],
                                                       title='Search a file')  # Search for a file
             self.currfile = self.file_in  # Set currfile as new file name found above
-        
+            break
         self.show_screen(self.loading_screen)
         messagebox.showinfo('Load File', 'loading selected file...')
-        run = self.load()  # load selected file
-        print('File loaded successfully')
+        #run = self.load()  # load selected file
+        print('File opened successfully')
 
     def quitter(self):
         quit_pop = messagebox.askquestion('Quit Application', 'Are you sure you want to quit Pac-Man?')
