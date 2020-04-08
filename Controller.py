@@ -7,7 +7,7 @@ import subprocess
 
 
 class Application(tk.Tk):
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -22,7 +22,6 @@ class Application(tk.Tk):
         self.map = self.gameboard.map
         model = m.SQLModel('pacman.db')
         self.currfile = model.filename
-
         self.show_screen(self.start_screen)
 
     def new_game(self):
@@ -32,6 +31,7 @@ class Application(tk.Tk):
 
     def show_screen(self,screen):
         if self.current_screen == screen:
+            pass
 
     def new_game    (
         self    ):
@@ -41,8 +41,8 @@ class Application(tk.Tk):
 
     def show_screen (
         self    ,
-        screen  ):
-    # SCREEN PLACEMENT
+        screen):
+        # SCREEN PLACEMENT
         if self.current_screen  == screen   :
             return
         if self.current_screen != None  :
@@ -64,34 +64,14 @@ class Application(tk.Tk):
         self.show_screen(self.gameboard)
         return stuff
 
-    def opener(self):
-        model = m.SQLModel(self.currfile)
-        while self == 'demo.txt':  # If self still default file break askopenfilename
-            break
-        else:
-            self.file_in = filedialog.askopenfilename(initialdir='C:\Documents\Github\211-pacman',
-                                                      filetypes=[('File', '*.txt')],
-                                                      title='Search a file')  # Search for a file
-            self.currfile = self.file_in  # Set currfile as new file name found above
-        
-        self.show_screen(self.loading_screen)
-        messagebox.showinfo('Load File', 'loading selected file...')
-        run = self.load()  # load selected file
-        print('File loaded successfully')
-
     def quitter(self):
-    # QUIT MENU OPTION TRIGGER
-
-        quit_pop = messagebox.askquestion('Quit Pac-Man', 'Are you sure you want to quit Pac-Man?')
+        # QUIT MENU OPTION TRIGGER
+        quit_pop = messagebox.askquestion('Quit Pacman', 'Are you sure you want to quit Pacman?')
         if quit_pop == 'yes':
             self.destroy()
         else:
-       #     messagebox.showinfo('Return', 'Returning to Pac-Man...')
             pass
-       # self.gameboard = v.GameBoard(self)
-       # self.gameboard.grid()
 
-        #self.game = v.gameboard(self)
 
     def gameover(self):
     # GAME OVER SCREEN TRIGGER
