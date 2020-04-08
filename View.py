@@ -4,8 +4,7 @@ from tkinter import ttk
 from collections import defaultdict
 from tkinter import messagebox
 from tkinter import filedialog
-from tkinter.ttk import * 
-#import pygame
+from tkinter.ttk import *
 import csv
 import os
 import os.path
@@ -24,141 +23,6 @@ YELLOW = (250,225,0)
 WIDTH = 500
 HEIGHT = 500
 
-'''
-class Character(pygame.sprite.Sprite):
-    #sprite for pacman/ghosts
-    def __init__(self,x,y,ppx,ppy,speed):
-        pygame.sprite.Sprite.__init__(self)
-        self.x = x
-        self.y = y
-        self.ppx = self.x * 20
-        self.ppy = self.y * 20
-        self.speed = speed
-        #self.color = color
-        #self.isPacman = isPacman
-
-        self.image = pygame.Surface((20,20))
-        self.image.fill(YELLOW)
-        self.rect = self.image.get_rect(x=self.ppx,y=self.ppy)
-
-    def update_left(self):
-        self.rect.x -= self.speed
-
-    def update_right(self):
-        self.rect.x += self.speed
-
-    def update_up(self):
-        self.rect.y -= self.speed
-
-    def update_down(self):
-        self.rect.y += self.speed
-
-
-class gameboard():
-    def __init__(self, parent, *args, **kwargs):
-
-        #initializing pygame
-        pygame.display.init()
-        clock = pygame.time.Clock()
-        all_sprites = pygame.sprite.Group()
-        self.pacman = Character(1,1,20,20,5)
-        print(self.pacman.ppx)
-        all_sprites.add(self.pacman)
-
-        # sets up window size
-        WINDOW_SIZE = [500,500]
-        screen = pygame.display.set_mode(WINDOW_SIZE)
-
-
-
-        self.cellwidth = 18
-        self.cellheight = 18
-        MARGIN = 2
-        self.map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                    [1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-                    [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-                    [1, 2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 2, 1],
-                    [1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-                    [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
-                    [1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 1],
-                    [1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 1],
-                    [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-                    [1, 2, 2, 2, 1, 1, 1, 2, 1, 0, 0, 0, 1, 2, 1, 1, 1, 2, 2, 2, 1],
-                    [1, 2, 1, 1, 1, 2, 2, 2, 1, 0, 0, 0, 1, 2, 2, 2, 1, 1, 1, 2, 1],
-                    [1, 2, 2, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 2, 2, 1],
-                    [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-                    [1, 2, 1, 1, 1, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 1, 1, 1, 2, 1],
-                    [1, 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 1],
-                    [1, 2, 2, 2, 2, 2, 2, 1, 2, 1, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 1],
-                    [1, 2, 1, 1, 1, 1, 2, 2, 2, 1, 2, 1, 2, 2, 2, 1, 1, 1, 1, 2, 1],
-                    [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-                    [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
-
-        #mainloop runs until user quits
-        running = True
-        while running:
-
-            #did the user click the close button?
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-
-            #update characters
-            all_sprites.update()
-
-            #draw/render
-            screen.fill((0,0,0))
-
-            # displays the level map
-            for row in range(20):
-                for column in range(21):
-                    if self.map[row][column] == 0:
-                        pygame.draw.rect(screen, BLACK, [(MARGIN + self.cellwidth) * column + MARGIN,
-                                                         (MARGIN + self.cellheight) * row + MARGIN, self.cellwidth,
-                                                         self.cellheight])
-                    elif self.map[row][column] == 1:
-                        # print("ONE")
-                        pygame.draw.rect(screen, BLUE, [(MARGIN + self.cellwidth) * column + MARGIN,
-                                                        (MARGIN + self.cellheight) * row + MARGIN, self.cellwidth,
-                                                        self.cellheight])
-                    else:
-                        # print("TWO")
-                        pygame.draw.rect(screen, WHITE,
-                                         [(MARGIN + self.cellwidth) * column + 8, (MARGIN + self.cellheight) * row + 8,
-                                          3, 3])
-
-
-            all_sprites.draw(screen)
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_LEFT]:
-                self.pacman.update_left()
-                #print(self.map[self.pacman.ppx][self.pacman.ppy])
-            if keys[pygame.K_RIGHT]:
-                self.pacman.update_right()
-                #print(self.map[self.pacman.ppx][self.pacman.ppy])
-            if keys[pygame.K_UP]:
-                self.pacman.update_up()
-                #print(self.map[self.pacman.ppx][self.pacman.ppy])
-            if keys[pygame.K_DOWN]:
-                self.pacman.update_down()
-                #print(self.map[self.pacman.ppx][self.pacman.ppy])
-
-
-            #if self.pacman and self.map[self.pacman.x][self.pacman.y] == 2:
-             #   print("food")
-
-            pygame.display.update()
-
-
-
-
-
-            pygame.display.flip()
-
-    pygame.quit()
-'''
-
 class Player():
     def __init__(self,parent,x,y,speed):
         self.x = x
@@ -175,16 +39,13 @@ class Ghosts():
         self.ppy = x * 20
         self.speed = speed
 
-
 class GameBoard(tk.Canvas):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs,width=500,height=500,bg="black")
         self.current = (0,0)
-
         self.control = parent
         parent.title('Pacmac HD 2020.v3')
 
-        parent.title("Pac-Man HD")
         self.direction = None
         self.previous = None
         self.previous2 = None
@@ -310,11 +171,7 @@ class GameBoard(tk.Canvas):
             self.control.save()
 
         def load_game():
-            common = 0
-            #return self.control.load()
-
             l_score, l_map = self.control.load()
-            #filter1 = list(map)
             filter1 = l_map
             new_list = []
             final_list = []
@@ -323,7 +180,7 @@ class GameBoard(tk.Canvas):
                     pass
                 else:
                     new_list.append(int(var))
-            # Set final_list
+            # SETUP FINAL_LIST IN SELF.MAP FORMAT
             final_list.append(new_list[0:21])
             final_list.append(new_list[21:42])
             final_list.append(new_list[42:63])
@@ -346,32 +203,17 @@ class GameBoard(tk.Canvas):
             final_list.append(new_list[378:399])
             final_list.append(new_list[399:420])
 
-            print('final:', final_list)  # remove after
+            # SET SCORE AND MAP WITH INT L_SCORE AND FINAL_LIST
             self.score = l_score
             self.map = final_list
 
-            self.pacman.x = 1
-            self.pacman.y = 1
+            self.pacman_newx = 1
+            self.pacman_newy = 1
             self.update_map()
 
-        def openfile():
-            print('opening file...')
-            #self.control.opener()
-            #load_game()
-
-
-
-        # SEARCH FILE
-            print('Opening File...')
-            self.control.opener()
-            load_game()
-
-        def load_game():
-        # LOAD SAVED GAME
-            print("Load Game")
-
         def quit_game():
-        # QUIT
+            # QUIT
+            self.control.quitter()
             print("Quit Game")
 
         #CHECKS_LIVES
@@ -453,7 +295,6 @@ class GameBoard(tk.Canvas):
             else:
                 pass
 
-
         def moveleft():
             coords = self.coords(self.pacmanplayer)
             y = int(coords[0] / 20)
@@ -506,7 +347,6 @@ class GameBoard(tk.Canvas):
                 self.after(100,movedown)
             else:
                 pass
-
 
         def moveup():
             coords = self.coords(self.pacmanplayer)
@@ -591,7 +431,6 @@ class GameBoard(tk.Canvas):
             else:
                 self.previous = self.ghost_direction
                 ghost_choose_direction()
-
 
         def ghostmoveright():
             coords = self.coords(self.ghost1)
@@ -1134,7 +973,7 @@ class OverScreen    (
 
         self._add_image()
 
-        score   = kwargs.get('score',0)
+        score = kwargs.get('score',0)
 
         self._label1 = Label(self._frame, text= "GAME OVER", style = "a.TLabel")
         self._label1.grid(row=1,column=1)
