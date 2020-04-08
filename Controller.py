@@ -24,25 +24,19 @@ class Application(tk.Tk):
         self.currfile = model.filename
         self.show_screen(self.start_screen)
 
-    def new_game(self):
-        self.gameboard = v.GameBoard(self)
-        subprocess.call(["afplay","audio/game_starting.wav"])
-        self.show_screen(self.gameboard)
-
-    def show_screen(self,screen):
-        if self.current_screen == screen:
-            pass
-
     def new_game    (
         self    ):
     # NEW GAME MENU OPTION TRIGGER
-        self.gameboard = v.GameBoard(self)
-        self.show_screen(self.gameboard)
+
+    self.gameboard = v.GameBoard(self)
+    subprocess.call(["afplay", "audio/game_starting.wav"])
+    self.show_screen(self.gameboard)
 
     def show_screen (
         self    ,
         screen):
         # SCREEN PLACEMENT
+
         if self.current_screen  == screen   :
             return
         if self.current_screen != None  :
@@ -51,21 +45,24 @@ class Application(tk.Tk):
         self.current_screen.grid(column=1, row=1, sticky='news')
     
     def save(self):
+        # Call Save_game in model with score and map
+
         self.score = self.gameboard.score
         self.map = self.gameboard.map
-        # Call Save_game in model with score and map
         model = m.SQLModel(self.currfile)
         model.save_game(self.score, self.map)
 
     def load(self):
+        # Get score and map from load, game (score, map)
+
         model = m.SQLModel(self.currfile)
-        # get score and map from load, game (score,map)
         stuff = model.load_game()
         self.show_screen(self.gameboard)
         return stuff
 
     def quitter(self):
         # QUIT MENU OPTION TRIGGER
+
         quit_pop = messagebox.askquestion('Quit Pacman', 'Are you sure you want to quit Pacman?')
         if quit_pop == 'yes':
             self.destroy()
@@ -75,6 +72,7 @@ class Application(tk.Tk):
 
     def gameover(self):
     # GAME OVER SCREEN TRIGGER
+
         self.show_screen(self.over_screen)
                  
 if __name__ == "__main__":
