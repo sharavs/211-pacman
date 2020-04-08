@@ -14,6 +14,7 @@ import re
 import time
 import threading
 from PIL import ImageTk, Image
+import subprocess
 
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -181,7 +182,6 @@ class GameBoard(tk.Canvas):
         self.current = (0,0)
 
         self.control = parent
-        master
         parent.title('Pacmac HD 2020.v3')
 
         parent.title("Pac-Man HD")
@@ -378,6 +378,7 @@ class GameBoard(tk.Canvas):
         def check_lives():
         # CHECK PAC-MAN LIFE
             if self.lives == 0:
+                subprocess.call(["afplay","audio/game_over.wav"])
                 print("LOST")
                 self.killed()
             else:
@@ -415,6 +416,7 @@ class GameBoard(tk.Canvas):
                     init()
             else:
                 if self.score == 1039:
+                    subprocess.call(["afplay","audio/player_wins.wav"])
                     ## GAME OVER - FINISHED
                     print("FINISHED")
                     self.killed()
@@ -437,6 +439,7 @@ class GameBoard(tk.Canvas):
                 # IF STATEMENT CHECKS COLLISION WITH GHOST
                 if (self.pacman_newx * self.cellwidth == self.ghost_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost_newy * self.cellheight) or (self.pacman_newx*self.cellwidth == self.ghost2_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost2_newy*self.cellheight) or (self.pacman_newx * self.cellwidth == self.ghost3_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost3_newy * self.cellheight):
                     self.lives -=1
+                    subprocess.call(["afplay","audio/ghost_eats_pacman.wav"])
                     check_lives()
                     init()
                 if (self.map[next_right[0]][next_right[1]] == 2):
@@ -464,6 +467,7 @@ class GameBoard(tk.Canvas):
                     # IF STATEMENT CHECKS COLLISION WITH GHOST
                     if (self.pacman_newx * self.cellwidth == self.ghost_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost_newy * self.cellheight) or (self.pacman_newx*self.cellwidth == self.ghost2_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost2_newy*self.cellheight) or (self.pacman_newx * self.cellwidth == self.ghost3_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost3_newy * self.cellheight):
                         self.lives -= 1
+                        subprocess.call(["afplay","audio/ghost_eats_pacman.wav"])
                         check_lives()
                         init()
                     if (self.map[next_left[0]][next_left[1]] == 2):
@@ -489,6 +493,7 @@ class GameBoard(tk.Canvas):
                 # IF STATEMENT CHECKS COLLISION WITH GHOST
                 if (self.pacman_newx * self.cellwidth == self.ghost_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost_newy * self.cellheight) or (self.pacman_newx * self.cellwidth == self.ghost2_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost2_newy * self.cellheight) or (self.pacman_newx * self.cellwidth == self.ghost3_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost3_newy * self.cellheight):
                     self.lives -=1
+                    subprocess.call(["afplay","audio/ghost_eats_pacman.wav"])
                     check_lives()
                     init()
                 if (self.map[next_down[0]][next_down[1]] == 2):
@@ -515,6 +520,7 @@ class GameBoard(tk.Canvas):
                 #IF STATEMENT CHECKS COLLISION WITH GHOST
                 if (self.pacman_newx * self.cellwidth == self.ghost_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost_newy * self.cellheight) or (self.pacman_newx*self.cellwidth == self.ghost2_newx*self.cellwidth and self.pacman_newy*self.cellheight == self.ghost2_newy*self.cellheight) or (self.pacman_newx * self.cellwidth == self.ghost3_newx * self.cellwidth and self.pacman_newy * self.cellheight == self.ghost3_newy * self.cellheight):
                     self.lives -=1
+                    subprocess.call(["afplay","audio/ghost_eats_pacman.wav"])
                     check_lives()
                     init()
                 if (self.map[next_up[0]][next_up[1]] == 2):
@@ -1013,6 +1019,7 @@ class GameBoard(tk.Canvas):
 
     # INVOKE GAME OVER SCREEN
     def killed(self):
+        
         self.control.gameover()
 
     ############################
