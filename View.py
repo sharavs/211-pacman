@@ -978,7 +978,7 @@ class OverScreen    (
         self._label1 = Label(self._frame, text= "GAME OVER", style = "a.TLabel")
         self._label1.grid(row=1,column=1)
         
-        self._label2 = Label(self._frame, text= f"YOUR SCORE : {score}",
+        self._label2 = Label(self._frame, text='Player Score: {}'.format(score),
             style = "a.TLabel")
         self._label2.grid(row=2,column=1)
 
