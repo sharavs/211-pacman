@@ -5,7 +5,6 @@ import tkinter as tk
 from time import sleep
 import subprocess
 
-
 class Application(tk.Tk):
 
     def __init__(self, *args, **kwargs):
