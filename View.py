@@ -786,6 +786,7 @@ class GameBoard(tk.Canvas):
                 self.previous3 = self.ghost_direction3
                 ghost_choose_direction3()
 
+                
         # MAIN MENU CODE
 
         mainmenu = Menu(self)
@@ -946,10 +947,10 @@ class GameBoard(tk.Canvas):
     #### SCREENS START HERE ####
     ############################
 
-
-# BASE SCREEN CLASS
 class BaseScreen(
     tk.Frame):
+    # BASE SCREEN CLASS
+
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs, width=500, height=500, bg="black")
 
@@ -1003,9 +1004,10 @@ class BaseScreen(
         self._image.grid(row=0, column=1)
 
 
-# HOME SCREEN (W/ MAIN MENU)
 class StartScreen(
     BaseScreen):
+    # HOME SCREEN (W/ MAIN MENU)
+
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self._add_image()
